@@ -29,6 +29,9 @@ import org.apache.skywalking.oap.server.core.config.NamingControl;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.server.grpc.GRPCHandler;
 
+/**
+ *
+ */
 @Slf4j
 public class JVMMetricReportServiceHandler extends JVMMetricReportServiceGrpc.JVMMetricReportServiceImplBase implements GRPCHandler {
     private final JVMSourceDispatcher jvmSourceDispatcher;
@@ -55,6 +58,7 @@ public class JVMMetricReportServiceHandler extends JVMMetricReportServiceGrpc.JV
         builder.setServiceInstance(namingControl.formatInstanceName(builder.getServiceInstance()));
 
         builder.getMetricsList().forEach(jvmMetric -> {
+            //
             jvmSourceDispatcher.sendMetric(builder.getService(), builder.getServiceInstance(), jvmMetric);
         });
 

@@ -58,6 +58,7 @@ public class DispatcherManager implements DispatcherDetectorListener {
         if (dispatchers != null) {
             source.prepare();
             for (SourceDispatcher dispatcher : dispatchers) {
+                //
                 dispatcher.dispatch(source);
             }
         }

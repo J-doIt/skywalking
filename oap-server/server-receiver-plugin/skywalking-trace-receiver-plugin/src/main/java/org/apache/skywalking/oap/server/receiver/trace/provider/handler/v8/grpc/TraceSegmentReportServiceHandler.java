@@ -34,6 +34,9 @@ import org.apache.skywalking.oap.server.telemetry.api.HistogramMetrics;
 import org.apache.skywalking.oap.server.telemetry.api.MetricsCreator;
 import org.apache.skywalking.oap.server.telemetry.api.MetricsTag;
 
+/**
+ * TraceSegment 逻辑处理器
+ */
 @Slf4j
 public class TraceSegmentReportServiceHandler extends TraceSegmentReportServiceGrpc.TraceSegmentReportServiceImplBase implements GRPCHandler {
     private final ModuleManager moduleManager;
@@ -60,6 +63,11 @@ public class TraceSegmentReportServiceHandler extends TraceSegmentReportServiceG
         );
     }
 
+    /**
+     *
+     * @param responseObserver
+     * @return
+     */
     @Override
     public StreamObserver<SegmentObject> collect(StreamObserver<Commands> responseObserver) {
         return new StreamObserver<SegmentObject>() {

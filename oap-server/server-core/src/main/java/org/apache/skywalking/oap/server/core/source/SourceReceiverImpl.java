@@ -33,6 +33,7 @@ public class SourceReceiverImpl implements SourceReceiver {
 
     @Override
     public void receive(ISource source) {
+        //
         dispatcherManager.forward(source);
     }
 

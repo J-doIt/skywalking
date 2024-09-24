@@ -52,6 +52,7 @@ public class RecordStreamProcessor implements StreamProcessor<Record> {
     public void in(Record record) {
         RecordPersistentWorker worker = workers.get(record.getClass());
         if (worker != null) {
+            //
             worker.in(record);
         }
     }

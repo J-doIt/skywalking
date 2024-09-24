@@ -70,6 +70,9 @@ public class JVMSourceDispatcher {
                 service, serviceId, serviceInstance, serviceInstanceId, minuteTimeBucket, metrics.getClazz());
     }
 
+    /**
+     * 处理 CPU 数据
+     */
     private void sendToCpuMetricProcess(String service,
                                         String serviceId,
                                         String serviceInstance,
@@ -85,9 +88,13 @@ public class JVMSourceDispatcher {
         double adjustedCpuUsagePercent = Math.max(cpu.getUsagePercent(), 1.0);
         serviceInstanceJVMCPU.setUsePercent(adjustedCpuUsagePercent);
         serviceInstanceJVMCPU.setTimeBucket(timeBucket);
+        //
         sourceReceiver.receive(serviceInstanceJVMCPU);
     }
 
+    /**
+     * 处理 GC 数据
+     */
     private void sendToGCMetricProcess(String service,
                                        String serviceId,
                                        String serviceInstance,
@@ -117,6 +124,9 @@ public class JVMSourceDispatcher {
         });
     }
 
+    /**
+     * 处理 Memory 数据
+     */
     private void sendToMemoryMetricProcess(String service,
                                            String serviceId,
                                            String serviceInstance,
@@ -139,6 +149,9 @@ public class JVMSourceDispatcher {
         });
     }
 
+    /**
+     * 处理 Memory Pool 数据
+     */
     private void sendToMemoryPoolMetricProcess(String service,
                                                String serviceId,
                                                String serviceInstance,

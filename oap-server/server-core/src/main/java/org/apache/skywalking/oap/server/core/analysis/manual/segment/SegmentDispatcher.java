@@ -41,6 +41,7 @@ public class SegmentDispatcher implements SourceDispatcher<Segment> {
         segment.setTagsRawData(source.getTags());
         segment.setTags(Tag.Util.toStringList(source.getTags()));
 
+        //
         RecordStreamProcessor.getInstance().in(segment);
     }
 }
