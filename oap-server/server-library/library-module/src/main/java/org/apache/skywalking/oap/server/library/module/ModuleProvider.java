@@ -26,12 +26,17 @@ import lombok.Setter;
  * The <code>ModuleProvider</code> is an implementation of a {@link ModuleDefine}.
  * <p>
  * And each moduleDefine can have one or more implementation, which depends on `application.yml`
+ *
+ * <pre>
+ * 组件服务提供者
+ * </pre>
  */
 public abstract class ModuleProvider implements ModuleServiceHolder {
     @Setter
     private ModuleManager manager;
     @Setter
     private ModuleDefine moduleDefine;
+    /** ≤ 服务的class类型 , 服务 ≥ */
     private final Map<Class<? extends Service>, Service> services = new HashMap<>();
 
     public ModuleProvider() {
@@ -58,31 +63,47 @@ public abstract class ModuleProvider implements ModuleServiceHolder {
 
     /**
      * In prepare stage, the moduleDefine should initialize things which are irrelative other modules.
+     * <pre>
+     * (在 prepare 阶段，moduleDefine 应该初始化与其他模块无关的东西。)
+     *
+     * provider.start 前 和 provider.prepare 后，会进行 模块加载顺序的排序（见 BootstrapFlow.makeSequence）
+     * </pre>
      */
     public abstract void prepare() throws ServiceNotProvidedException, ModuleStartException;
 
     /**
      * In start stage, the moduleDefine has been ready for interop.
+     * <pre>
+     * (在 start 阶段，moduleDefine 已准备好进行互操作。)
+     * </pre>
      */
     public abstract void start() throws ServiceNotProvidedException, ModuleStartException;
 
     /**
      * This callback executes after all modules start up successfully.
+     * <pre>
+     * (此回调在所有模块成功启动后执行。)
+     * </pre>
      */
     public abstract void notifyAfterCompleted() throws ServiceNotProvidedException, ModuleStartException;
 
     /**
+     * 返回 这个 moduleDefine 需要的 其他 moduleDefine names
      * @return moduleDefine names which does this moduleDefine require?
      */
     public abstract String[] requiredModules();
 
     /**
      * Register an implementation for the service of this moduleDefine provider.
+     * <pre>
+     * (为这个 moduleDefine provider 的 service 注册一个 实现。)
+     * </pre>
      */
     @Override
     public final void registerServiceImplementation(Class<? extends Service> serviceType,
         Service service) throws ServiceNotProvidedException {
         if (serviceType.isInstance(service)) {
+            //
             this.services.put(serviceType, service);
         } else {
             throw new ServiceNotProvidedException(serviceType + " is not implemented by " + service);
@@ -91,6 +112,10 @@ public abstract class ModuleProvider implements ModuleServiceHolder {
 
     /**
      * Make sure all required services have been implemented.
+     * <pre>
+     * (确保已实施所有必需的服务。)
+     * 校验 ModuleProvider 包含的 Service 们都创建成功
+     * </pre>
      *
      * @param requiredServices must be implemented by the moduleDefine.
      * @throws ServiceNotProvidedException when exist unimplemented service.

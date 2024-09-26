@@ -30,12 +30,14 @@ class BootstrapFlow {
     private static final Logger LOGGER = LoggerFactory.getLogger(BootstrapFlow.class);
 
     private Map<String, ModuleDefine> loadedModules;
+    /**  */
     private List<ModuleProvider> startupSequence;
 
     BootstrapFlow(Map<String, ModuleDefine> loadedModules) throws CycleDependencyException, ModuleNotFoundException {
         this.loadedModules = loadedModules;
         startupSequence = new LinkedList<>();
 
+        // 排序
         makeSequence();
     }
 
@@ -45,7 +47,7 @@ class BootstrapFlow {
         for (ModuleProvider provider : startupSequence) {
             LOGGER.info("start the provider {} in {} module.", provider.name(), provider.getModuleName());
             provider.requiredCheck(provider.getModule().services());
-
+            /* provider.start */
             provider.start();
         }
     }
@@ -78,6 +80,7 @@ class BootstrapFlow {
             int numOfToBeSequenced = allProviders.size();
             for (int i = 0; i < allProviders.size(); i++) {
                 ModuleProvider provider = allProviders.get(i);
+                // 这个 moduleDefine 需要什么
                 String[] requiredModules = provider.requiredModules();
                 if (CollectionUtils.isNotEmpty(requiredModules)) {
                     boolean isAllRequiredModuleStarted = true;

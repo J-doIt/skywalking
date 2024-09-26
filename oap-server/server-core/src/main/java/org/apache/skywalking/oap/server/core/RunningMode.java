@@ -22,6 +22,9 @@ import com.google.common.base.Strings;
 
 /**
  * The running mode of the OAP server.
+ * <pre>
+ * (OAP 服务器的运行模式。)
+ * </pre>
  */
 public class RunningMode {
     private static String MODE = "";
@@ -38,6 +41,9 @@ public class RunningMode {
 
     /**
      * Init mode, do all initialization things, and process should exit.
+     * <pre>
+     * (init 模式，执行所有初始化操作，进程应退出。)
+     * </pre>
      *
      * @return true if in this status
      */
@@ -47,6 +53,9 @@ public class RunningMode {
 
     /**
      * No-init mode, the oap just starts up, but wouldn't do storage init.
+     * <pre>
+     * (no-init 模式，oap 只是启动，但不会执行 storage init。)
+     * </pre>
      *
      * @return true if in this status.
      */

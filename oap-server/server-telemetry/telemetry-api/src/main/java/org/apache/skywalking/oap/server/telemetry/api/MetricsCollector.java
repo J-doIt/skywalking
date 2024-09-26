@@ -22,6 +22,9 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * Collect all metrics from telemetry.
+ * <pre>
+ * (从 telemetry 中收集所有指标。)
+ * </pre>
  */
 public interface MetricsCollector extends Service {
 

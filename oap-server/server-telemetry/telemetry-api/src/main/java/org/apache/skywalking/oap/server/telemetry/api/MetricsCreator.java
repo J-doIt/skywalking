@@ -25,6 +25,10 @@ import org.apache.skywalking.oap.server.library.module.Service;
 /**
  * Open API to telemetry module, allow to create metrics instance with different type. Types inherits from prometheus
  * project, and plan to move to openmetrics APIs after it is ready.
+ *
+ * <pre>
+ * (遥测模块 的 Open API，允许创建不同类型的 metrics 实例。Types 继承自 prometheus 项目，并计划在准备就绪后迁移到openmetrics api。)
+ * </pre>
  */
 public interface MetricsCreator extends Service {
 

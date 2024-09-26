@@ -24,6 +24,9 @@ import org.apache.skywalking.oap.server.telemetry.api.MetricsCreator;
 
 /**
  * Telemetry module definition
+ * <pre>
+ * (遥测模块定义)
+ * </pre>
  */
 public class TelemetryModule extends ModuleDefine {
     public static final String NAME = "telemetry";
@@ -35,8 +38,8 @@ public class TelemetryModule extends ModuleDefine {
     @Override
     public Class[] services() {
         return new Class[] {
-            MetricsCreator.class,
-            MetricsCollector.class
+            MetricsCreator.class, // 指标创建器
+            MetricsCollector.class // 指标收集器
         };
     }
 }

@@ -19,6 +19,9 @@ package org.apache.skywalking.oap.server.recevier.log.module;
 
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
+/**
+ * 日志模块/组件
+ */
 public class LogModule extends ModuleDefine {
 
     public LogModule() {

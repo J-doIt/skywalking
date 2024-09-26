@@ -18,6 +18,9 @@
 
 package org.apache.skywalking.oap.server.starter;
 
+/**
+ * Main
+ */
 public class OAPServerStartUp {
     public static void main(String[] args) {
         OAPServerBootstrap.start();

@@ -110,6 +110,13 @@ import org.apache.skywalking.oap.server.telemetry.api.TelemetryRelatedContext;
  *
  * NOTICE. In our experiences, no one should re-implement the core module service implementations, unless we are very
  * familiar with all mechanisms of SkyWalking.
+ *
+ * <pre>
+ * (核心模块提供程序包括 CoreModule.services() 的推荐和默认实现。
+ * 所有具有这些默认实现的服务都被广泛使用，包括 数据接收者、数据分析、流式处理、存储和查询。
+ *
+ * 通知。根据我们的经验，除非我们非常熟悉 SkyWalking 的所有机制，否则没有人应该重新实现核心模块服务实现。)
+ * </pre>
  */
 public class CoreModuleProvider extends ModuleProvider {
 

@@ -57,6 +57,11 @@ import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
 /**
  * Core module definition. Define all open services to other modules.
+ * <pre>
+ * (核心模块定义。定义所有 开放服务 给其他模块。)
+ *
+ * CoreModule 类是 SkyWalking 核心模块的定义，它继承自 ModuleDefine，负责定义该模块的基本信息和服务接口列表。
+ * </pre>
  */
 public class CoreModule extends ModuleDefine {
     public static final String NAME = "core";
@@ -68,26 +73,33 @@ public class CoreModule extends ModuleDefine {
     @Override
     public Class[] services() {
         List<Class> classes = new ArrayList<>();
-        classes.add(ConfigService.class);
-        classes.add(DownSamplingConfigService.class);
-        classes.add(NamingControl.class);
-        classes.add(IComponentLibraryCatalogService.class);
 
-        classes.add(IWorkerInstanceGetter.class);
-        classes.add(IWorkerInstanceSetter.class);
+        // 添加基本服务接口
 
-        classes.add(MeterSystem.class);
+        classes.add(ConfigService.class); // 配置服务
+        classes.add(DownSamplingConfigService.class); // 下采样配置服务
+        classes.add(NamingControl.class); // 命名控制服务
+        classes.add(IComponentLibraryCatalogService.class); // 组件库目录服务
 
-        addServerInterface(classes);
-        addReceiverInterface(classes);
-        addInsideService(classes);
-        addCacheService(classes);
-        addQueryService(classes);
-        addProfileService(classes);
-        addOALService(classes);
-        addManagementService(classes);
+        // 工作实例管理接口
 
-        classes.add(CommandService.class);
+        classes.add(IWorkerInstanceGetter.class); // 工作实例获取器
+        classes.add(IWorkerInstanceSetter.class); // 工作实例设置器
+
+        classes.add(MeterSystem.class); // 度量系统服务
+
+        // 添加更多服务类别，通过调用专门的方法来组织不同的服务接口
+
+        addServerInterface(classes); // 添加服务实例：GRPCHandlerRegister，JettyHandlerRegister
+        addReceiverInterface(classes); // 添加接收实例：SourceReceiver
+        addInsideService(classes); // 添加内部实例
+        addCacheService(classes); // 添加缓存实例：NetworkAddressAliasCache
+        addQueryService(classes); // 添加查询实例
+        addProfileService(classes); //
+        addOALService(classes); // 添加 OAL引擎 实例：OALEngineLoaderService
+        addManagementService(classes); // 添加：UITemplateManagementService
+
+        classes.add(CommandService.class); // 命令服务接口
 
         return classes.toArray(new Class[]{});
     }
@@ -96,41 +108,70 @@ public class CoreModule extends ModuleDefine {
         classes.add(UITemplateManagementService.class);
     }
 
+    /**
+     * 添加与性能剖析任务相关的服务到服务列表中。
+     * 包括任务的增删改查服务、缓存服务等。
+     */
     private void addProfileService(List<Class> classes) {
-        classes.add(ProfileTaskMutationService.class);
-        classes.add(ProfileTaskQueryService.class);
-        classes.add(ProfileTaskCache.class);
+        classes.add(ProfileTaskMutationService.class); // 性能剖析任务的变更服务
+        classes.add(ProfileTaskQueryService.class); // 性能剖析任务的查询服务
+        classes.add(ProfileTaskCache.class); // 性能剖析任务的缓存服务
     }
 
+    /**
+     * 添加OAL（Observability Analysis Language）引擎加载服务到服务列表。
+     * OAL用于定义和执行观测分析逻辑。
+     *
+     * @param classes 用于存储服务类的列表。
+     */
     private void addOALService(List<Class> classes) {
-        classes.add(OALEngineLoaderService.class);
+        // SkyWalking后端分析平台 的 OAL（描述分析过程的可扩展、轻量级编译型语言）
+        classes.add(OALEngineLoaderService.class); // OAL引擎加载服务
     }
 
+    /**
+     * 添加查询服务到列表中，包括拓扑、指标元数据、指标数据、链路追踪、日志、元数据、聚合查询等服务。
+     * 这些服务支持从SkyWalking后端查询各种监控和分析数据。
+     *
+     * @param classes 用于存储服务类的列表。
+     */
     private void addQueryService(List<Class> classes) {
-        classes.add(TopologyQueryService.class);
-        classes.add(MetricsMetadataQueryService.class);
-        classes.add(MetricsQueryService.class);
-        classes.add(TraceQueryService.class);
-        classes.add(LogQueryService.class);
-        classes.add(MetadataQueryService.class);
-        classes.add(AggregationQueryService.class);
-        classes.add(AlarmQueryService.class);
-        classes.add(TopNRecordsQueryService.class);
-        classes.add(BrowserLogQueryService.class);
-        classes.add(EventQueryService.class);
+        classes.add(TopologyQueryService.class);         // 拓扑查询服务
+        classes.add(MetricsMetadataQueryService.class); // 指标元数据查询服务
+        classes.add(MetricsQueryService.class);         // 指标数据查询服务
+        classes.add(TraceQueryService.class);           // 链路追踪查询服务
+        classes.add(LogQueryService.class);             // 日志查询服务
+        classes.add(MetadataQueryService.class);        // 元数据查询服务
+        classes.add(AggregationQueryService.class);     // 聚合查询服务
+        classes.add(AlarmQueryService.class);           // 告警查询服务
+        classes.add(TopNRecordsQueryService.class);     // TopN记录查询服务
+        classes.add(BrowserLogQueryService.class);      // 浏览器日志查询服务
+        classes.add(EventQueryService.class);           // 事件查询服务
     }
 
+    /**
+     * 添加服务端接口服务到列表中，涉及 gRPC 和 Jetty 处理程序的注册服务。
+     * 这些服务用于处理来自客户端的请求。
+     *
+     * @param classes 用于存储服务类的列表。
+     */
     private void addServerInterface(List<Class> classes) {
-        classes.add(GRPCHandlerRegister.class);
-        classes.add(JettyHandlerRegister.class);
+        classes.add(GRPCHandlerRegister.class); // gRPC处理程序注册服务
+        classes.add(JettyHandlerRegister.class); // Jetty处理程序注册服务
     }
 
+    /**
+     * 添加内部服务到列表中，这些服务主要用于框架内部操作和管理。
+     * 包括模型创建、模型管理、模型操作、远程客户端管理以及消息发送服务等。
+     *
+     * @param classes 用于存储服务类的列表。
+     */
     private void addInsideService(List<Class> classes) {
-        classes.add(ModelCreator.class);
-        classes.add(IModelManager.class);
-        classes.add(ModelManipulator.class);
-        classes.add(RemoteClientManager.class);
-        classes.add(RemoteSenderService.class);
+        classes.add(ModelCreator.class);          // 模块创建服务
+        classes.add(IModelManager.class);         // 模块管理接口实现
+        classes.add(ModelManipulator.class);      // 模块操作服务
+        classes.add(RemoteClientManager.class);   // 远程客户端管理服务
+        classes.add(RemoteSenderService.class);   // 远程消息发送服务
     }
 
     private void addCacheService(List<Class> classes) {

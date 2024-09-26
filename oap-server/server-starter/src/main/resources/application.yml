@@ -56,6 +56,7 @@ cluster:
     # Nacos auth accessKey
     accessKey: ${SW_CLUSTER_NACOS_ACCESSKEY:""}
     secretKey: ${SW_CLUSTER_NACOS_SECRETKEY:""}
+# 核心模块 - CoreModule
 core:
   selector: ${SW_CORE:default}
   default:
@@ -117,6 +118,7 @@ core:
     prepareThreads: ${SW_CORE_PREPARE_THREADS:2}
     # Turn it on then automatically grouping endpoint by the given OpenAPI definitions.
     enableEndpointNameGroupingByOpenapi: ${SW_CORE_ENABLE_ENDPOINT_NAME_GROUPING_BY_OPAENAPI:true}
+# 存储
 storage:
   selector: ${SW_STORAGE:h2}
   elasticsearch:
