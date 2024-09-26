@@ -51,6 +51,10 @@ import org.slf4j.LoggerFactory;
 /**
  * This class manages the connections between OAP servers. There is a task schedule that will automatically query a
  * server list from the cluster module. Such as Zookeeper cluster module or Kubernetes cluster module.
+ *
+ * <pre>
+ * (此类管理 OAP 服务器之间的连接。有一个任务计划，它会自动从 cluster 模块查询 server 列表。例如 Zookeeper 集群模块或 Kubernetes 集群模块。)
+ * </pre>
  */
 public class RemoteClientManager implements Service {
 
@@ -99,9 +103,17 @@ public class RemoteClientManager implements Service {
     /**
      * Query OAP server list from the cluster module and create a new connection for the new node. Make the OAP server
      * orderly because of each of the server will send stream data to each other by hash code.
+     *
+     * <pre>
+     * (从集群模块查询 OAP 服务器列表，并为新节点创建新连接。使 OAP 服务器有序，因为每个服务器都会通过哈希码相互发送流数据。)
+     *
+     * 刷新远程客户端管理器状态，包括更新集群大小度量指标、查询最新集群节点列表，并根据需要重建远程客户端连接。
+     * </pre>
      */
     void refresh() {
+        // 初始化集群大小度量指标（仅首次）
         if (gauge == null) {
+            // 从 Telemetry模块 获取 MetricsCreator 服务，并创建集群大小的Gauge指标
             gauge = moduleDefineHolder.find(TelemetryModule.NAME)
                                       .provider()
                                       .getService(MetricsCreator.class)
@@ -111,6 +123,7 @@ public class RemoteClientManager implements Service {
                                       );
         }
         try {
+            // 延迟初始化 ClusterNodesQuery 服务实例（线程安全）
             if (Objects.isNull(clusterNodesQuery)) {
                 synchronized (RemoteClientManager.class) {
                     if (Objects.isNull(clusterNodesQuery)) {
@@ -125,20 +138,25 @@ public class RemoteClientManager implements Service {
                 LOGGER.debug("Refresh remote nodes collection.");
             }
 
+            // 查询当前OAP节点的集群中所有远程实例
             List<RemoteInstance> instanceList = clusterNodesQuery.queryRemoteNodes();
+            // 对实例列表进行去重并排序
             instanceList = distinct(instanceList);
             Collections.sort(instanceList);
 
+            // 更新集群大小度量指标的值
             gauge.setValue(instanceList.size());
 
             if (LOGGER.isDebugEnabled()) {
                 instanceList.forEach(instance -> LOGGER.debug("Cluster instance: {}", instance.toString()));
             }
 
+            // 比较新旧实例列表，如有变动则重建远程客户端
             if (!compare(instanceList)) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("ReBuilding remote clients.");
                 }
+                // 重建远程客户端
                 reBuildRemoteClients(instanceList);
             }
 

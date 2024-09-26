@@ -326,45 +326,63 @@ public class CoreModuleProvider extends ModuleProvider {
 
     @Override
     public void start() throws ModuleStartException {
-        grpcServer.addHandler(new RemoteServiceHandler(getManager()));
-        grpcServer.addHandler(new HealthCheckServiceHandler());
+
+        // 向gRPC服务器添加处理器，用于处理远程服务请求
+        grpcServer.addHandler(new RemoteServiceHandler(getManager())); // 添加处理远程服务调用的处理器
+        grpcServer.addHandler(new HealthCheckServiceHandler()); // 添加健康检查服务处理器
+
+        // 启动远程客户端管理器，以便管理与其它服务的连接和通信
         remoteClientManager.start();
 
-        // Disable OAL script has higher priority
+        // 加载OAL脚本，特别地，禁用OAL脚本具有更高的优先级
+        // DisableOALDefine.INSTANCE 通常用于指示不执行任何OAL脚本的情况
         oalEngineLoaderService.load(DisableOALDefine.INSTANCE);
 
         try {
-            receiver.scan();
-            annotationScan.scan();
+            // 执行扫描操作，这可能涉及到例如检测或初始化接收器配置、注解解析等功能
+            receiver.scan(); // 扫描并处理接收器相关配置或初始化
+            annotationScan.scan(); // 扫描并处理应用程序中的注解，用于动态追踪或配置
         } catch (IOException | IllegalAccessException | InstantiationException | StorageException e) {
             throw new ModuleStartException(e.getMessage(), e);
         }
 
+        // 初始化gRPC服务器实例地址，包含主机地址、端口以及是否SSL连接的标记
         Address gRPCServerInstanceAddress = new Address(moduleConfig.getGRPCHost(), moduleConfig.getGRPCPort(), true);
+        // 设置Telemetry上下文ID为gRPC服务器实例地址的字符串表示形式
         TelemetryRelatedContext.INSTANCE.setId(gRPCServerInstanceAddress.toString());
+        // 根据模块配置的角色决定是否注册gRPC服务器实例到集群中
         if (CoreModuleConfig.Role.Mixed.name()
                                        .equalsIgnoreCase(
                                            moduleConfig.getRole())
             || CoreModuleConfig.Role.Aggregator.name()
                                                .equalsIgnoreCase(
                                                    moduleConfig.getRole())) {
+
+            // 创建gRPC服务器远程实例
             RemoteInstance gRPCServerInstance = new RemoteInstance(gRPCServerInstanceAddress);
+            // 从 模块管理器 中找到 cluster 模块，获取 ClusterRegister 服务，并注册gRPC服务器实例到集群中
             this.getManager()
-                .find(ClusterModule.NAME)
-                .provider()
-                .getService(ClusterRegister.class)
-                .registerRemote(gRPCServerInstance);
+                .find(ClusterModule.NAME) // 查找名为Cluster的模块
+                .provider() // 获取提供者
+                .getService(ClusterRegister.class) // 获取ClusterRegister服务实例
+                .registerRemote(gRPCServerInstance); // 执行注册操作
         }
 
+        // 根据配置设置OAP节点角色
         OAPNodeChecker.setROLE(CoreModuleConfig.Role.fromName(moduleConfig.getRole()));
 
+        // 获取动态配置服务，并注册配置变化监听器
         DynamicConfigurationService dynamicConfigurationService = getManager().find(ConfigurationModule.NAME)
                                                                               .provider()
                                                                               .getService(
                                                                                   DynamicConfigurationService.class);
+        // 注册Apdex阈值配置监听器
         dynamicConfigurationService.registerConfigChangeWatcher(apdexThresholdConfig);
+        // 注册端点名称分组规则监听器
         dynamicConfigurationService.registerConfigChangeWatcher(endpointNameGroupingRuleWatcher);
+        // 注册日志配置监听器
         dynamicConfigurationService.registerConfigChangeWatcher(loggingConfigWatcher);
+        // 如果启用基于OpenAPI的端点名称分组，则注册相应的监听器
         if (moduleConfig.isEnableEndpointNameGroupingByOpenapi()) {
             dynamicConfigurationService.registerConfigChangeWatcher(endpointNameGroupingRule4OpenapiWatcher);
         }

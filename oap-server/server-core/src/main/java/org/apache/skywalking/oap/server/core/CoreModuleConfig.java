@@ -178,6 +178,9 @@ public class CoreModuleConfig extends ModuleConfig {
 
     /**
      * OAP server could work in different roles.
+     * <pre>
+     * (OAP 服务器可以在不同的角色中工作。)
+     * </pre>
      */
     public enum Role {
         /**

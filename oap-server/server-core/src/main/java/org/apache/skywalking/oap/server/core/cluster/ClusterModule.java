@@ -20,6 +20,9 @@ package org.apache.skywalking.oap.server.core.cluster;
 
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
+/**
+ * 集群模块定义
+ */
 public class ClusterModule extends ModuleDefine {
 
     public static final String NAME = "cluster";
@@ -31,8 +34,8 @@ public class ClusterModule extends ModuleDefine {
     @Override
     public Class[] services() {
         return new Class[] {
-            ClusterRegister.class,
-            ClusterNodesQuery.class
+            ClusterRegister.class, // 集群注册服务
+            ClusterNodesQuery.class // 集群服务实例查询服务
         };
     }
 }

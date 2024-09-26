@@ -26,7 +26,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class ClusterHealthStatus {
+    /** 远程实例（RemoteInstance） 是否健康 */
     private boolean health;
+    /** 远程实例（RemoteInstance） 不健康的原因 */
     private String reason;
 
     public static final ClusterHealthStatus HEALTH = new ClusterHealthStatus(true, null);

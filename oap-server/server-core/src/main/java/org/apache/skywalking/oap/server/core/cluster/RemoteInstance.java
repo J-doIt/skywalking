@@ -24,6 +24,7 @@ import org.apache.skywalking.oap.server.core.remote.client.Address;
 @Getter
 public class RemoteInstance implements Comparable<RemoteInstance> {
 
+    /** 服务实例 的 地址：host:port */
     private final Address address;
 
     public RemoteInstance(Address address) {

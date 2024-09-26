@@ -20,7 +20,15 @@ package org.apache.skywalking.oap.server.core.cluster;
 
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * SPI：集群注册
+ */
 public interface ClusterRegister extends Service {
 
+    /**
+     * 注册 服务实例 到 集群
+     * @param remoteInstance 服务实例：eg：gRPCServerInstance
+     * @throws ServiceRegisterException
+     */
     void registerRemote(RemoteInstance remoteInstance) throws ServiceRegisterException;
 }

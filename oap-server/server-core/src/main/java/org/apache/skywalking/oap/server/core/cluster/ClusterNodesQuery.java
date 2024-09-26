@@ -21,7 +21,14 @@ package org.apache.skywalking.oap.server.core.cluster;
 import java.util.List;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * SPI：获取远程实例服务
+ */
 public interface ClusterNodesQuery extends Service {
 
+    /**
+     * 从 集群 获取 远程实例（RemoteInstance）
+     * @return
+     */
     List<RemoteInstance> queryRemoteNodes();
 }

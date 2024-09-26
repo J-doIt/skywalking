@@ -27,9 +27,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * OAP 节点检查器
+ *
+ * OAP：Observability Analysis Platform，可观测性分析平台
+ */
 public class OAPNodeChecker {
+    /** 集群模式下，非法的节点地址 */
     private static final Set<String> ILLEGAL_NODE_ADDRESS_IN_CLUSTER_MODE = Sets.newHashSet("127.0.0.1", "localhost");
 
+    /** 核心模块配置为：Mixed（混合）模式 */
     @Setter
     private static CoreModuleConfig.Role ROLE = CoreModuleConfig.Role.Mixed;
 
@@ -47,6 +54,13 @@ public class OAPNodeChecker {
      * 1.can't get the instance list
      * 2.can't get itself
      * 3.check for illegal node in cluster mode such as 127.0.0.1, localhost
+     *
+     * <pre>
+     * (检查 远程实例 运行状况，在以下情况下将 运行状况 设置为false:
+     * 1.无法获得实例列表
+     * 2.不能得到它自己
+     * 3.检查集群模式下是否存在非法节点，如127.0.0.1,localhost)
+     * </pre>
      *
      * @param remoteInstances all the remote instances from cluster
      * @return true health false unHealth

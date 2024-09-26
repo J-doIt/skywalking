@@ -13,8 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# 集群模块定义
 cluster:
   selector: ${SW_CLUSTER:standalone}
+  # 单机
   standalone:
   # Please check your ZooKeeper is 3.5+, However, it is also compatible with ZooKeeper 3.4.x. Replace the ZooKeeper 3.5+
   # library the oap-libs folder with your ZooKeeper 3.4.x library.
@@ -73,6 +75,7 @@ core:
     restAcceptorPriorityDelta: ${SW_CORE_REST_JETTY_DELTA:0}
     restAcceptQueueSize: ${SW_CORE_REST_JETTY_QUEUE_SIZE:0}
     httpMaxRequestHeaderSize: ${SW_CORE_HTTP_MAX_REQUEST_HEADER_SIZE:8192}
+    #
     gRPCHost: ${SW_CORE_GRPC_HOST:0.0.0.0}
     gRPCPort: ${SW_CORE_GRPC_PORT:11800}
     maxConcurrentCallsPerConnection: ${SW_CORE_GRPC_MAX_CONCURRENT_CALL:0}
