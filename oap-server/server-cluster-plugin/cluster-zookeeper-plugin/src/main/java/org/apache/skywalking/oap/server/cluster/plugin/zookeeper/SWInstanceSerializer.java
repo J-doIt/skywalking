@@ -24,6 +24,9 @@ import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.skywalking.oap.server.core.cluster.RemoteInstance;
 
+/**
+ * 自定义实例序列化与反序列化
+ */
 public class SWInstanceSerializer implements InstanceSerializer<RemoteInstance> {
 
     private final Gson gson = new Gson();
