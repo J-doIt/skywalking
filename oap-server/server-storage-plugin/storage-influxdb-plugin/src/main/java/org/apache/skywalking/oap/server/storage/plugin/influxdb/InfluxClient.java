@@ -43,6 +43,9 @@ import static org.influxdb.querybuilder.BuiltQuery.QueryBuilder.ti;
 
 /**
  * InfluxDB connection maintainer, provides base data write/query API.
+ * <pre>
+ * (InfluxDB 连接维护者，提供基础数据写入/ 查询 API。)
+ * </pre>
  */
 @Slf4j
 public class InfluxClient implements Client, HealthCheckable {

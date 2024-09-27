@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * JDBC Client uses HikariCP connection management lib to execute SQL.
+ * <pre>
+ * (JDBC 客户端使用 HikariCP 连接管理库来执行 SQL。)
+ * </pre>
  */
 public class JDBCHikariCPClient implements Client, HealthCheckable {
     private static final Logger LOGGER = LoggerFactory.getLogger(JDBCHikariCPClient.class);

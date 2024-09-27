@@ -22,6 +22,9 @@ import org.apache.skywalking.oap.server.library.util.HealthChecker;
 
 /**
  * HealthCheckable indicate the client has the capacity of health check and need to register healthChecker.
+ * <pre>
+ * (HealthCheckable 表示客户端具有健康检查能力，需要注册 healthChecker。)
+ * </pre>
  */
 public interface HealthCheckable {
 

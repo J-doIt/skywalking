@@ -27,6 +27,9 @@ import org.apache.skywalking.oap.server.library.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * gRPC 客户端
+ */
 public class GRPCClient implements Client {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GRPCClient.class);
