@@ -48,7 +48,9 @@ public class ClusterModuleStandaloneProvider extends ModuleProvider {
 
     @Override
     public void prepare() throws ServiceNotProvidedException {
+        // 创建并初始化 StandaloneManager（集群管理器模拟器），负责集群注册与查询逻辑
         StandaloneManager standaloneManager = new StandaloneManager();
+        // 注册 StandaloneManager 为 ClusterRegister 和 ClusterNodesQuery 服务 的 实现
         this.registerServiceImplementation(ClusterRegister.class, standaloneManager);
         this.registerServiceImplementation(ClusterNodesQuery.class, standaloneManager);
     }
