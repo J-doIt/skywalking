@@ -30,6 +30,11 @@ import org.apache.skywalking.oap.server.library.module.Service;
  * of {@link StorageHashMapBuilder}.
  *
  * Typically, the storage needs to provide a more native format rather than {@link java.util.HashMap}.
+ *
+ * <pre>
+ * (StorageBuilderFactory 提供了覆盖默认存储构建器的功能，这些 构建器 是 StorageHashMapBuilder 的实现。
+ * 通常，storage 需要提供比 HashMap 更原生的格式。)
+ * </pre>
  */
 public interface StorageBuilderFactory extends Service {
     /**

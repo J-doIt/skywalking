@@ -22,6 +22,9 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * A specific interface for storage layer services.
+ * <pre>
+ * (存储层服务的特定接口。)
+ * </pre>
  */
 public interface DAO extends Service {
 }

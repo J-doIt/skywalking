@@ -71,6 +71,13 @@ import org.apache.skywalking.oap.server.storage.plugin.jdbc.h2.dao.H2UITemplateM
  * Because this module is not really related to MySQL, instead, it is based on MySQL SQL style with JDBC, so, by having
  * this storage implementation, we could also use this in MySQL-compatible projects, such as, Apache ShardingSphere,
  * TiDB
+ *
+ * <pre>
+ * (MySQL存储提供商 应该是 SkyWalking 存储解决方案的第二选择。
+ * 它增强并来自 H2StorageProvider，但在生产中使用时要考虑更多。
+ * 因为这个模块与MySQL无关，相反，它是基于 MySQL SQL 风格的 JDBC，
+ * 所以，通过这个存储实现，我们也可以在MySQL兼容的项目中使用它，比如 Apache ShardingSphere, TiDB)
+ * </pre>
  */
 @Slf4j
 public class MySQLStorageProvider extends ModuleProvider {
@@ -97,10 +104,17 @@ public class MySQLStorageProvider extends ModuleProvider {
         return config;
     }
 
+    /**
+     * prepare 阶段，用于初始化和注册所有依赖H2数据库客户端的服务实现。
+     * 此方法会根据配置创建数据库连接，并将相应的DAO（数据访问对象）实现注册到系统服务中。
+     */
     @Override
     public void prepare() throws ServiceNotProvidedException {
+
+
         this.registerServiceImplementation(StorageBuilderFactory.class, new StorageBuilderFactory.Default());
 
+        // 使用 配置属性 创建 MySQL HikariCP 客户端，用于数据库连接池管理
         mysqlClient = new JDBCHikariCPClient(config.getProperties());
 
         this.registerServiceImplementation(IBatchDAO.class, new H2BatchDAO(mysqlClient, config.getMaxSizeOfBatchSql(), config.getAsyncBatchPersistentPoolSize()));
@@ -156,9 +170,13 @@ public class MySQLStorageProvider extends ModuleProvider {
 
     @Override
     public void start() throws ServiceNotProvidedException, ModuleStartException {
+
+        // 获取 ConfigService 的实现，用于读取 配置信息。
         final ConfigService configService = getManager().find(CoreModule.NAME)
                                                         .provider()
                                                         .getService(ConfigService.class);
+
+        // 验证 可搜索的Trace标签数量 是否超过数据库数组列的最大限制
         final int numOfSearchableTags = configService.getSearchableTracesTags().split(Const.COMMA).length;
         if (numOfSearchableTags * config.getNumOfSearchableValuesPerTag() > config.getMaxSizeOfArrayColumn()) {
             throw new ModuleStartException("Size of searchableTracesTags[" + numOfSearchableTags
@@ -166,6 +184,8 @@ public class MySQLStorageProvider extends ModuleProvider {
                                                + "] > maxSizeOfArrayColumn[" + config.getMaxSizeOfArrayColumn()
                                                + "]. Potential out of bound in the runtime.");
         }
+
+        // 验证 可搜索的日志标签数量 是否超过数据库数组列的最大限制
         final int numOfSearchableLogsTags = configService.getSearchableLogsTags().split(Const.COMMA).length;
         if (numOfSearchableLogsTags * config.getNumOfSearchableValuesPerTag() > config.getMaxSizeOfArrayColumn()) {
             throw new ModuleStartException("Size of searchableLogsTags[" + numOfSearchableLogsTags
@@ -173,6 +193,8 @@ public class MySQLStorageProvider extends ModuleProvider {
                                                + "] > maxSizeOfArrayColumn[" + config.getMaxSizeOfArrayColumn()
                                                + "]. Potential out of bound in the runtime.");
         }
+
+        // 验证 可搜索的告警标签数量 是否超过数据库数组列的最大限制
         final int numOfSearchableAlarmTags = configService.getSearchableAlarmTags().split(Const.COMMA).length;
         if (numOfSearchableAlarmTags * config.getNumOfSearchableValuesPerTag() > config.getMaxSizeOfArrayColumn()) {
             throw new ModuleStartException("Size of searchableAlarmTags[" + numOfSearchableAlarmTags
@@ -182,11 +204,15 @@ public class MySQLStorageProvider extends ModuleProvider {
         }
 
         try {
+            // 尝试连接数据库
             mysqlClient.connect();
 
+            // 创建 MySQLTableInstaller 实例，用于安装或更新数据库表结构
             MySQLTableInstaller installer = new MySQLTableInstaller(
                 mysqlClient, getManager(), config.getMaxSizeOfArrayColumn(), config.getNumOfSearchableValuesPerTag()
             );
+
+            // 注册 ModelListener 以便在模型变化时自动调整数据库表结构
             getManager().find(CoreModule.NAME).provider().getService(ModelCreator.class).addModelListener(installer);
         } catch (StorageException e) {
             throw new ModuleStartException(e.getMessage(), e);
