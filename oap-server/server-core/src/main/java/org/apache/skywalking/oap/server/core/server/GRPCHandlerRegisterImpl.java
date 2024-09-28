@@ -23,8 +23,12 @@ import io.grpc.ServerInterceptor;
 import io.grpc.ServerServiceDefinition;
 import org.apache.skywalking.oap.server.library.server.grpc.GRPCServer;
 
+/**
+ *
+ */
 public class GRPCHandlerRegisterImpl implements GRPCHandlerRegister {
 
+    /** GRPCServer  */
     private final GRPCServer server;
 
     public GRPCHandlerRegisterImpl(GRPCServer server) {

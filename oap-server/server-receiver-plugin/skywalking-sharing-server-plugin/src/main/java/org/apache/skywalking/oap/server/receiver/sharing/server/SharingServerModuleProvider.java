@@ -85,6 +85,7 @@ public class SharingServerModuleProvider extends ModuleProvider {
             jettyServerConfig.setContextPath(config.getRestContextPath());
 
             jettyServer = new JettyServer(jettyServerConfig);
+            //
             jettyServer.initialize();
 
             this.registerServiceImplementation(JettyHandlerRegister.class, new JettyHandlerRegisterImpl(jettyServer));
@@ -124,10 +125,12 @@ public class SharingServerModuleProvider extends ModuleProvider {
             if (config.getGRPCThreadPoolSize() > 0) {
                 grpcServer.setThreadPoolSize(config.getGRPCThreadPoolSize());
             }
+            //
             grpcServer.initialize();
 
             GRPCHandlerRegisterImpl grpcHandlerRegister = new GRPCHandlerRegisterImpl(grpcServer);
             if (Objects.nonNull(authenticationInterceptor)) {
+                //
                 grpcHandlerRegister.addFilter(authenticationInterceptor);
             }
             this.registerServiceImplementation(GRPCHandlerRegister.class, grpcHandlerRegister);
@@ -162,9 +165,11 @@ public class SharingServerModuleProvider extends ModuleProvider {
     public void notifyAfterCompleted() throws ModuleStartException {
         try {
             if (Objects.nonNull(grpcServer)) {
+                //
                 grpcServer.start();
             }
             if (Objects.nonNull(jettyServer)) {
+                //
                 jettyServer.start();
             }
         } catch (ServerException e) {

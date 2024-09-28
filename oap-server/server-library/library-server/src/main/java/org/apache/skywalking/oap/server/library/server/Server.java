@@ -18,14 +18,21 @@
 
 package org.apache.skywalking.oap.server.library.server;
 
+/**
+ * 服务器接口
+ */
 public interface Server {
 
+    /** 获得服务器地址 */
     String hostPort();
 
+    /** 获得服务器分类 */
     String serverClassify();
 
+    /** 初始化服务器 */
     void initialize();
 
+    /** 启动服务器 */
     void start() throws ServerException;
 
     boolean isSSLOpen();

@@ -20,5 +20,8 @@ package org.apache.skywalking.oap.server.library.server.grpc;
 
 import org.apache.skywalking.oap.server.library.server.ServerHandler;
 
+/**
+ * gRPC 请求处理器接口
+ */
 public interface GRPCHandler extends ServerHandler {
 }

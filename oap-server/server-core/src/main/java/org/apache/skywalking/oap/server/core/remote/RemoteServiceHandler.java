@@ -43,6 +43,10 @@ import org.slf4j.LoggerFactory;
  * This class is Server-side streaming RPC implementation. It's a common service for OAP servers to receive message from
  * each others. The stream data id is used to find the object to deserialize message. The next worker id is used to find
  * the worker to process message.
+ * <pre>
+ * (此类是服务器端流式处理 RPC 实现。这是 OAP 服务器相互接收消息的常见服务。
+ * 流数据 ID 用于查找要反序列化消息的对象。下一个 worker id 用于查找要处理 message 的工作程序。)
+ * </pre>
  */
 public class RemoteServiceHandler extends RemoteServiceGrpc.RemoteServiceImplBase implements GRPCHandler {
 

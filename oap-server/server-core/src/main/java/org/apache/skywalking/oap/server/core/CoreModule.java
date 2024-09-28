@@ -90,7 +90,7 @@ public class CoreModule extends ModuleDefine {
 
         // 添加更多服务类别，通过调用专门的方法来组织不同的服务接口
 
-        addServerInterface(classes); // 添加服务实例：GRPCHandlerRegister，JettyHandlerRegister
+        addServerInterface(classes); //  添加服务实例：GRPCHandlerRegister，JettyHandlerRegister
         addReceiverInterface(classes); // 添加接收实例：SourceReceiver
         addInsideService(classes); // 添加内部实例
         addCacheService(classes); // 添加缓存实例：NetworkAddressAliasCache

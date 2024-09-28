@@ -222,6 +222,7 @@ public class CoreModuleProvider extends ModuleProvider {
         if (moduleConfig.getGRPCThreadPoolSize() > 0) {
             grpcServer.setThreadPoolSize(moduleConfig.getGRPCThreadPoolSize());
         }
+        // GRPCServer 初始化
         grpcServer.initialize();
 
         JettyServerConfig jettyServerConfig = JettyServerConfig.builder()
@@ -239,12 +240,14 @@ public class CoreModuleProvider extends ModuleProvider {
                                                                    moduleConfig.getHttpMaxRequestHeaderSize())
                                                                .build();
         jettyServer = new JettyServer(jettyServerConfig);
+        // JettyServer 初始化
         jettyServer.initialize();
 
         this.registerServiceImplementation(ConfigService.class, new ConfigService(moduleConfig));
         this.registerServiceImplementation(
             DownSamplingConfigService.class, new DownSamplingConfigService(moduleConfig.getDownsampling()));
 
+        // 为这个 CoreModuleProvider 的 2个 服务处理程序注册器 分别 注册 实现
         this.registerServiceImplementation(GRPCHandlerRegister.class, new GRPCHandlerRegisterImpl(grpcServer));
         this.registerServiceImplementation(JettyHandlerRegister.class, new JettyHandlerRegisterImpl(jettyServer));
 
@@ -391,6 +394,7 @@ public class CoreModuleProvider extends ModuleProvider {
     @Override
     public void notifyAfterCompleted() throws ModuleStartException {
         try {
+            // GRPCServer 启动
             grpcServer.start();
             jettyServer.start();
         } catch (ServerException e) {

@@ -35,7 +35,7 @@ import org.apache.skywalking.oap.server.telemetry.api.MetricsCreator;
 import org.apache.skywalking.oap.server.telemetry.api.MetricsTag;
 
 /**
- * TraceSegment 逻辑处理器
+ * TraceSegment 报告 服务处理器
  */
 @Slf4j
 public class TraceSegmentReportServiceHandler extends TraceSegmentReportServiceGrpc.TraceSegmentReportServiceImplBase implements GRPCHandler {

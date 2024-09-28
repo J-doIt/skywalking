@@ -36,6 +36,7 @@ public class JettyServer implements Server {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JettyServer.class);
 
+    /** jetty Server */
     private org.eclipse.jetty.server.Server server;
     private ServletContextHandler servletContextHandler;
     private JettyServerConfig jettyServerConfig;
@@ -54,35 +55,51 @@ public class JettyServer implements Server {
         return "Jetty";
     }
 
+    /**
+     * 初始化Jetty服务器，根据配置项设置线程池、HTTP配置、连接器参数以及Servlet上下文。
+     */
     @Override
     public void initialize() {
+
+        // 创建QueuedThreadPool线程池，用于管理Jetty服务器的工作线程
         QueuedThreadPool threadPool = new QueuedThreadPool();
+        // 设置线程池最小和最大线程数，源自Jetty服务器配置
         threadPool.setMinThreads(jettyServerConfig.getJettyMinThreads());
         threadPool.setMaxThreads(jettyServerConfig.getJettyMaxThreads());
 
+        // 创建Jetty服务器实例，使用自定义的线程池
         server = new org.eclipse.jetty.server.Server(threadPool);
 
+        // 配置HTTP请求的相关设置，如最大请求头大小
         HttpConfiguration httpConfiguration = new HttpConfiguration();
         httpConfiguration.setRequestHeaderSize(jettyServerConfig.getJettyHttpMaxRequestHeaderSize());
 
+        // 创建ServerConnector以定义服务器如何接收连接，使用指定的HTTP配置
         ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(httpConfiguration));
         connector.setHost(jettyServerConfig.getHost());
         connector.setPort(jettyServerConfig.getPort());
-        connector.setIdleTimeout(jettyServerConfig.getJettyIdleTimeOut());
+        connector.setIdleTimeout(jettyServerConfig.getJettyIdleTimeOut()); // 设置连接器的空闲超时时间
         connector.setAcceptorPriorityDelta(jettyServerConfig.getJettyAcceptorPriorityDelta());
-        connector.setAcceptQueueSize(jettyServerConfig.getJettyAcceptQueueSize());
+        connector.setAcceptQueueSize(jettyServerConfig.getJettyAcceptQueueSize()); // 接受队列大小
+        // 将配置好的连接器添加到服务器
         server.setConnectors(new Connector[] {connector});
 
+        // 初始化ServletContextHandler，用于管理Servlet上下文，不支持会话
         servletContextHandler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+        // 设置上下文路径
         servletContextHandler.setContextPath(jettyServerConfig.getContextPath());
         LOGGER.info("http server root context path: {}", jettyServerConfig.getContextPath());
 
+        // 将Servlet上下文处理器设置为服务器的主处理器
         server.setHandler(servletContextHandler);
 
+        // 创建默认的Jetty处理程序实例
         JettyDefaultHandler defaultHandler = new JettyDefaultHandler();
+        // 创建ServletHolder用于持有默认处理程序的实例
         ServletHolder defaultHolder = new ServletHolder();
         defaultHolder.setServlet(defaultHandler);
 
+        // 将默认Servlet添加到Servlet上下文中，使用其指定的路径规范
         servletContextHandler.addServlet(defaultHolder, defaultHandler.pathSpec());
     }
 
@@ -123,6 +140,7 @@ public class JettyServer implements Server {
                 }
             }
 
+            // jetty server 启动
             server.start();
         } catch (Exception e) {
             throw new JettyServerException(e.getMessage(), e);

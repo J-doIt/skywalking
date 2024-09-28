@@ -18,5 +18,8 @@
 
 package org.apache.skywalking.oap.server.library.server;
 
+/**
+ * 服务器处理器接口
+ */
 public interface ServerHandler {
 }

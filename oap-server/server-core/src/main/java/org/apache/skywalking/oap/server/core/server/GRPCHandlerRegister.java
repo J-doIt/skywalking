@@ -23,6 +23,9 @@ import io.grpc.ServerInterceptor;
 import io.grpc.ServerServiceDefinition;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * Grpc 处理程序注册服务
+ */
 public interface GRPCHandlerRegister extends Service {
 
     void addHandler(BindableService handler);

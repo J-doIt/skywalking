@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.skywalking.oap.server.library.server.ServerHandler;
 
 public abstract class JettyHandler extends HttpServlet implements ServerHandler {
+
+    /** 请求路径定义 */
     public abstract String pathSpec();
 
     @Override

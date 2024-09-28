@@ -38,19 +38,26 @@ import org.apache.skywalking.oap.server.library.server.ServerException;
 import org.apache.skywalking.oap.server.library.server.grpc.ssl.DynamicSslContext;
 import org.apache.skywalking.oap.server.library.server.pool.CustomThreadFactory;
 
+/**
+ * 基于 gRPC 的服务器实现
+ */
 @Slf4j
 public class GRPCServer implements Server {
 
     private final String host;
     private final int port;
+    /** 每个连接的最大并发调用数 */
     private int maxConcurrentCallsPerConnection;
     private int maxMessageSize;
+    /** grpc Server，在 start 创建和启动 */
     private io.grpc.Server server;
+    /** Netty服务器构建器，在 initialize 阶段创建和配置 */
     private NettyServerBuilder nettyServerBuilder;
     private String certChainFile;
     private String privateKeyFile;
     private String trustedCAsFile;
     private DynamicSslContext sslContext;
+    /** 核心线程数 */
     private int threadPoolSize = Runtime.getRuntime().availableProcessors() * 4;
     private int threadPoolQueueSize = 10000;
 
@@ -100,25 +107,35 @@ public class GRPCServer implements Server {
         return "Google-RPC";
     }
 
+    /**
+     * 初始化方法，负责配置并准备gRPC服务器的启动参数。
+     */
     @Override
     public void initialize() {
+        // 使用指定的host和port创建服务器地址
         InetSocketAddress address = new InetSocketAddress(host, port);
+        // 创建固定大小的阻塞队列
         ArrayBlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<>(threadPoolQueueSize);
+        // 配置并创建线程池，使用自定义线程工厂和拒绝策略
         ExecutorService executor = new ThreadPoolExecutor(
             threadPoolSize, threadPoolSize, 60, TimeUnit.SECONDS, blockingQueue,
             new CustomThreadFactory("grpcServerPool"), new CustomRejectedExecutionHandler()
         );
+        // 初始化Netty服务器构建器
         nettyServerBuilder = NettyServerBuilder.forAddress(address);
-        nettyServerBuilder = nettyServerBuilder.maxConcurrentCallsPerConnection(maxConcurrentCallsPerConnection)
-                                               .maxInboundMessageSize(maxMessageSize)
-                                               .executor(executor);
+        nettyServerBuilder = nettyServerBuilder.maxConcurrentCallsPerConnection(maxConcurrentCallsPerConnection) // 设置每个连接的最大并发调用数
+                                               .maxInboundMessageSize(maxMessageSize) // 设置接收消息的最大大小
+                                               .executor(executor); // 使用自定义的线程池作为执行器
+
+        // 若提供了密钥文件和证书链文件，则配置SSL上下文
         if (!Strings.isNullOrEmpty(privateKeyFile) && !Strings.isNullOrEmpty(certChainFile)) {
             sslContext = DynamicSslContext.forServer(privateKeyFile, certChainFile, trustedCAsFile);
-            nettyServerBuilder.sslContext(sslContext);
+            nettyServerBuilder.sslContext(sslContext); // 应用SSL上下文到服务器构建器
         }
         log.info("Server started, host {} listening on {}", host, port);
     }
 
+    /** 自定义拒绝策略 */
     static class CustomRejectedExecutionHandler implements RejectedExecutionHandler {
 
         @Override
@@ -130,8 +147,11 @@ public class GRPCServer implements Server {
     @Override
     public void start() throws ServerException {
         try {
+            // 如果SSL上下文已配置，则启动它
             Optional.ofNullable(sslContext).ifPresent(DynamicSslContext::start);
+            // 构建 grpc服务器
             server = nettyServerBuilder.build();
+            // 启动 grpc服务器
             server.start();
         } catch (IOException e) {
             throw new GRPCServerException(e.getMessage(), e);
