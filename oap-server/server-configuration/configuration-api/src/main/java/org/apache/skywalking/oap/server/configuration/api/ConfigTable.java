@@ -26,6 +26,9 @@ import lombok.ToString;
 
 /**
  * ConfigTable contains all WatchType.SINGLE config.
+ * <pre>
+ * (ConfigTable 包含所有 WatchType.SINGLE 配置。)
+ * </pre>
  */
 @ToString
 public class ConfigTable {
@@ -40,6 +43,7 @@ public class ConfigTable {
     @Setter
     @ToString
     public static class ConfigItem {
+        /** {@link ConfigWatcherRegister.WatcherHolder#key WatcherHolder的key} */
         private String name;
         private String value;
 

@@ -30,14 +30,19 @@ import org.apache.skywalking.apm.util.RunnableWithExceptionProtection;
 
 /**
  * The default implementor of Config Watcher register.
+ * <pre>
+ * 配置观察者注册服务
+ * </pre>
  */
 @Slf4j
 public abstract class ConfigWatcherRegister implements DynamicConfigurationService {
+    /** 换行符 */
     public static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
     private Register singleConfigChangeWatcherRegister = new Register();
     @Getter
     private Register groupConfigChangeWatcherRegister = new Register();
     private volatile boolean isStarted = false;
+    /** 同步周期 */
     private final long syncPeriod;
 
     public ConfigWatcherRegister() {
@@ -55,11 +60,13 @@ public abstract class ConfigWatcherRegister implements DynamicConfigurationServi
         }
 
         WatcherHolder holder = new WatcherHolder(watcher);
+        // 检查是否重复注册
         if (singleConfigChangeWatcherRegister.containsKey(
             holder.getKey()) || groupConfigChangeWatcherRegister.containsKey(holder.getKey())) {
             throw new IllegalStateException("Duplicate register, watcher=" + watcher);
         }
 
+        // 确定 该 watcher 的 观察类型，并 put 到 this.xxxRegister
         switch (holder.getWatcher().getWatchType()) {
             case SINGLE:
                 singleConfigChangeWatcherRegister.put(holder.getKey(), holder);
@@ -78,6 +85,7 @@ public abstract class ConfigWatcherRegister implements DynamicConfigurationServi
 
         log.info("Current configurations after the bootstrap sync." + LINE_SEPARATOR + singleConfigChangeWatcherRegister.toString());
 
+        // 每 syncPeriod 秒执行一次 “配置同步”
         Executors.newSingleThreadScheduledExecutor()
                  .scheduleAtFixedRate(
                      new RunnableWithExceptionProtection(
@@ -86,15 +94,21 @@ public abstract class ConfigWatcherRegister implements DynamicConfigurationServi
                      ), 0, syncPeriod, TimeUnit.SECONDS);
     }
 
+    /** 配置同步 */
     void configSync() {
+        // 同步 WatchType.SINGLE 的配置
         singleConfigsSync();
+        // 同步 WatchType.GROUP 的配置
         groupConfigsSync();
     }
 
+    /** 同步 WatchType.SINGLE 的配置 */
     private void singleConfigsSync() {
+        // 读取配置，并将一个个 key-value 转为 ConfigTable 类型
         Optional<ConfigTable> configTable = readConfig(singleConfigChangeWatcherRegister.keys());
 
         // Config table would be null if no change detected from the implementation.
+        // （如果从 实现类 中未检测到任何更改，则 configTable 将为 null。）
         configTable.ifPresent(config -> {
             config.getItems().forEach(item -> {
                 String itemName = item.getName();
@@ -111,19 +125,23 @@ public abstract class ConfigWatcherRegister implements DynamicConfigurationServi
                 if (newItemValue == null) {
                     if (watcher.value() != null) {
                         // Notify watcher, the new value is null with delete event type.
+                        // （通知观察者，新值为 null，事件类型为 DELETE。）
                         watcher.notify(
                             new ConfigChangeWatcher.ConfigChangeEvent(null, ConfigChangeWatcher.EventType.DELETE));
                     } else {
                         // Don't need to notify, stay in null.
+                        // （无需通知，保持 null。）
                     }
                 } else {
                     if (!newItemValue.equals(watcher.value())) {
+                        // 通知观察者，新值为 newItemValue，事件类型为 MODIFY。
                         watcher.notify(new ConfigChangeWatcher.ConfigChangeEvent(
                             newItemValue,
                             ConfigChangeWatcher.EventType.MODIFY
                         ));
                     } else {
                         // Don't need to notify, stay in the same config value.
+                        // （不需要通知，保持相同的 config 值。）
                     }
                 }
             });
@@ -134,9 +152,11 @@ public abstract class ConfigWatcherRegister implements DynamicConfigurationServi
         });
     }
 
+    /** 同步 WatchType.GROUP 的配置 */
     private void groupConfigsSync() {
         Optional<GroupConfigTable> groupConfigTable = readGroupConfig(groupConfigChangeWatcherRegister.keys());
         // Config table would be null if no change detected from the implementation.
+        // （如果从 实现类 中未检测到任何更改，则 groupConfigTable 将为 null。）
         groupConfigTable.ifPresent(config -> {
             config.getGroupItems().forEach(groupConfigItems -> {
                 String groupConfigItemName = groupConfigItems.getName();
@@ -204,11 +224,23 @@ public abstract class ConfigWatcherRegister implements DynamicConfigurationServi
         });
     }
 
+    /**
+     * 根据 key 得到配置中的value，并将一个个的 key-value 保存成 ConfigTable 并返回
+     * @param keys {@link WatcherHolder#key WatcherHolder 的 key s}
+     */
     public abstract Optional<ConfigTable> readConfig(Set<String> keys);
 
+    /**
+     * 根据 key 得到配置中的value（key-value），并将一个个的 key-value（key-value） 保存成 GroupConfigTable 并返回
+     * @param keys {@link WatcherHolder#key WatcherHolder 的 key s}
+     */
     public abstract Optional<GroupConfigTable> readGroupConfig(Set<String> keys);
 
+    /**
+     * 保存了 {@link WatcherHolder#key key} - {@link WatcherHolder} 的映射关系
+     */
     public class Register {
+        /** ≤ {@link WatcherHolder#key WatcherHolder的key} , WatcherHolder ≥ */
         private Map<String, WatcherHolder> register = new HashMap<>();
 
         private boolean containsKey(String key) {
@@ -256,11 +288,14 @@ public abstract class ConfigWatcherRegister implements DynamicConfigurationServi
 
     @Getter
     protected class WatcherHolder {
+        /** 配置变更观察者 */
         private ConfigChangeWatcher watcher;
+        /** 字符串：观察者所属模块.观察者提供者.观察者关注的项 */
         private final String key;
 
         public WatcherHolder(ConfigChangeWatcher watcher) {
             this.watcher = watcher;
+            // 字符串：观察者所属模块.观察者提供者.观察者关注的项
             this.key = String.join(
                 ".", watcher.getModule(), watcher.getProvider().name(),
                 watcher.getItemName()

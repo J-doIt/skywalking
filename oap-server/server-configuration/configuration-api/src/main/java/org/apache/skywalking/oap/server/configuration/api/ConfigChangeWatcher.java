@@ -25,14 +25,34 @@ import org.apache.skywalking.oap.server.library.module.ModuleProvider;
 
 /**
  * ConfigChangeWatcher represents a watcher implementor, it will be called when the target value changed.
+ * <pre>
+ * (ConfigChangeWatcher 表示一个 watcher 实现器，当目标值发生变化时，它会被调用。)
+ *
+ * 配置变更观察者
+ * </pre>
  */
 @Getter
 public abstract class ConfigChangeWatcher {
+    /** 模块 */
     private final String module;
+    /** 模块提供者 */
     private final ModuleProvider provider;
+    /** 观察的项目名（单个属性、某个配置文件） */
     private final String itemName;
+    /** 观察类型 */
     protected WatchType watchType;
 
+    /**
+     * <pre>
+     * 构造 watcher 实例。
+     *
+     * WatchType 默认是 SINGLE。
+     * </pre>
+     *
+     * @param module
+     * @param provider
+     * @param itemName
+     */
     public ConfigChangeWatcher(String module, ModuleProvider provider, String itemName) {
         this.module = module;
         this.provider = provider;
@@ -42,6 +62,9 @@ public abstract class ConfigChangeWatcher {
 
     /**
      * Notify the watcher, the new value received.
+     * <pre>
+     * (通知 观察者 收到新值。)
+     * </pre>
      *
      * @param value of new.
      */
@@ -57,10 +80,13 @@ public abstract class ConfigChangeWatcher {
         return "ConfigChangeWatcher{" + "module=" + module + ", provider=" + provider + ", itemName='" + itemName + '\'' + '}';
     }
 
+    /** 配置变更事件 */
     @Setter(AccessLevel.PACKAGE)
     @Getter
     public static class ConfigChangeEvent {
+        /** 新值 */
         private String newValue;
+        /** 事件类型 */
         private EventType eventType;
 
         public ConfigChangeEvent(String newValue, EventType eventType) {
@@ -69,11 +95,17 @@ public abstract class ConfigChangeWatcher {
         }
     }
 
+    /** 事件类型 */
     public enum EventType {
         ADD, MODIFY, DELETE
     }
 
+    /** 观察类型 */
     public enum WatchType {
-        SINGLE, GROUP
+        /** ConfigChangeWatcher 默认是 SINGLE 类型 */
+        SINGLE,
+
+        /** {@link GroupConfigChangeWatcher} */
+        GROUP
     }
 }

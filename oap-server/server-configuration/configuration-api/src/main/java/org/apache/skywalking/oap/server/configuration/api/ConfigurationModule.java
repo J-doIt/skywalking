@@ -26,8 +26,14 @@ import org.apache.skywalking.oap.server.library.module.ModuleDefine;
  * <p>
  * Any configuration item in the whole OAP backend could register a watcher to configuration module, the item change
  * watcher will be called, if the value changed.
+ *
+ * <pre>
+ * (配置模块从远程服务同步设置，远程服务可以由该模块提供商实现。
+ * 整个 OAP 后端中的任何配置项都可以向配置模块注册一个 watcher，如果值发生变化，则会调用 item change watcher。)
+ * </pre>
  */
 public class ConfigurationModule extends ModuleDefine {
+    /** 模块名 */
     public static final String NAME = "configuration";
 
     public ConfigurationModule() {
@@ -36,6 +42,7 @@ public class ConfigurationModule extends ModuleDefine {
 
     @Override
     public Class[] services() {
+        // 动态配置服务接口
         return new Class[] {DynamicConfigurationService.class};
     }
 }

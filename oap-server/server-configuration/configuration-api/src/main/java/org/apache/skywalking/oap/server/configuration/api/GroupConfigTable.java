@@ -28,6 +28,9 @@ import lombok.ToString;
 
 /**
  * ConfigTable contains all WatchType.GROUP config.
+ * <pre>
+ * (ConfigTable 包含所有 WatchType.GROUP 配置。)
+ * </pre>
  */
 @ToString
 public class GroupConfigTable {
@@ -42,7 +45,9 @@ public class GroupConfigTable {
     @Setter
     @ToString
     public static class GroupConfigItems {
+        /** {@link ConfigWatcherRegister.WatcherHolder#key WatcherHolder的key} */
         private String name;
+        /** ≤ {@link ConfigTable.ConfigItem#name}  , ConfigItem ≥ */
         private Map<String, ConfigTable.ConfigItem> items = new ConcurrentHashMap<>();
 
         public GroupConfigItems(final String name) {

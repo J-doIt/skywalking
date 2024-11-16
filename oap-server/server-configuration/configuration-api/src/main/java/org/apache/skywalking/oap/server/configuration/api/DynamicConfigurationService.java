@@ -22,10 +22,16 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * DynamicConfigurationService provides API to register config change watcher.
+ * <pre>
+ * (DynamicConfigurationService 提供 API 来 注册配置变更观察器 。)
+ * </pre>
  */
 public interface DynamicConfigurationService extends Service {
     /**
      * Register a watcher to the target value
+     * <pre>
+     * 注册 watcher。
+     * </pre>
      *
      * @param watcher to register
      */

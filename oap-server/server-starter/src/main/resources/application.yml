@@ -422,6 +422,7 @@ telemetry:
     sslKeyPath: ${SW_TELEMETRY_PROMETHEUS_SSL_KEY_PATH:""}
     sslCertChainPath: ${SW_TELEMETRY_PROMETHEUS_SSL_CERT_CHAIN_PATH:""}
 
+# 配置模块
 configuration:
   selector: ${SW_CONFIGURATION:none}
   none:
