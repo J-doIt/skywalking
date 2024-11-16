@@ -16,4 +16,5 @@
 #
 #
 
+# SPI
 org.apache.skywalking.oap.server.configuration.nacos.NacosConfigurationProvider

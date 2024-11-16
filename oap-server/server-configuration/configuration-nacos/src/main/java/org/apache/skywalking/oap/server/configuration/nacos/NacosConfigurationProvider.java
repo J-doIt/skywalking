@@ -29,9 +29,13 @@ import org.apache.skywalking.oap.server.library.module.ModuleStartException;
 
 /**
  * Get configuration from Nacos.
+ * <pre>
+ * (从 Nacos 获取配置。)
+ * </pre>
  */
 @Slf4j
 public class NacosConfigurationProvider extends AbstractConfigurationProvider {
+    /** nacos 的 ModuleConfig */
     private NacosServerSettings settings;
 
     public NacosConfigurationProvider() {
@@ -50,6 +54,7 @@ public class NacosConfigurationProvider extends AbstractConfigurationProvider {
 
     @Override
     protected ConfigWatcherRegister initConfigReader() throws ModuleStartException {
+        // 检查 nacos 的 NacosServerSettings 配置的是否正确
         log.info("settings: {}", settings);
         if (Strings.isNullOrEmpty(settings.getServerAddr())) {
             throw new ModuleStartException("Nacos serverAddr cannot be null or empty.");
@@ -64,6 +69,7 @@ public class NacosConfigurationProvider extends AbstractConfigurationProvider {
             throw new ModuleStartException("Nacos Auth method should choose either username or accessKey, not both");
         }
         try {
+            // new 一个 Nacos配置观察者注册服务
             return new NacosConfigWatcherRegister(settings);
         } catch (NacosException e) {
             throw new ModuleStartException(e.getMessage(), e);

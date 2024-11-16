@@ -38,11 +38,18 @@ import org.apache.skywalking.oap.server.configuration.api.ConfigTable;
 import org.apache.skywalking.oap.server.configuration.api.ConfigWatcherRegister;
 import org.apache.skywalking.oap.server.configuration.api.GroupConfigTable;
 
+/**
+ * Nacos配置观察者注册服务
+ */
 @Slf4j
 public class NacosConfigWatcherRegister extends ConfigWatcherRegister {
+    /** nacos 的 SW.ModuleConfig */
     private final NacosServerSettings settings;
+    /** Nacos配置服务 */
     private final ConfigService configService;
+    /** ≤ dataId（WatcherHolder.key） , nacos配置的config ≥  */
     private final Map<String, Optional<String>> configItemKeyedByName;
+    /** ≤ dataId（WatcherHolder.key） , nacos 的 Listener ≥ */
     private final Map<String, Listener> listenersByKey;
 
     public NacosConfigWatcherRegister(NacosServerSettings settings) throws NacosException {
@@ -55,6 +62,7 @@ public class NacosConfigWatcherRegister extends ConfigWatcherRegister {
         final int port = this.settings.getPort();
         final String serverAddr = this.settings.getServerAddr();
 
+        // 根据 moduleConfig 初始化 Properties
         final Properties properties = new Properties();
         properties.put(PropertyKeyConst.SERVER_ADDR, serverAddr + ":" + port);
         properties.put(PropertyKeyConst.NAMESPACE, settings.getNamespace());
@@ -65,12 +73,15 @@ public class NacosConfigWatcherRegister extends ConfigWatcherRegister {
             properties.put(PropertyKeyConst.ACCESS_KEY, settings.getAccessKey());
             properties.put(PropertyKeyConst.SECRET_KEY, settings.getSecretKey());
         }
+        // 根据 Properties 初始化 Nacos配置服务
         this.configService = NacosFactory.createConfigService(properties);
     }
 
     @Override
     public Optional<ConfigTable> readConfig(Set<String> keys) {
+        // 移除不感兴趣的键和Listener
         removeUninterestedKeys(keys);
+        // 注册listener
         registerKeyListeners(keys);
 
         final ConfigTable table = new ConfigTable();
@@ -127,6 +138,7 @@ public class NacosConfigWatcherRegister extends ConfigWatcherRegister {
                 continue;
             }
             try {
+                // new 一个 nacos.Listener，并加入 this.listenersByKey
                 listenersByKey.putIfAbsent(dataId, new Listener() {
                     @Override
                     public Executor getExecutor() {
@@ -135,13 +147,17 @@ public class NacosConfigWatcherRegister extends ConfigWatcherRegister {
 
                     @Override
                     public void receiveConfigInfo(String configInfo) {
+                        // 执行发生变更的操作
                         onDataIdValueChanged(dataId, configInfo);
                     }
                 });
+                // 将 new 的 nacos.Listener 加入到 Nacos配置服务
                 configService.addListener(dataId, group, listenersByKey.get(dataId));
 
                 // the key is newly added, read the config for the first time
+                // （key 是新添加的，第一次读取 config）
                 final String config = configService.getConfig(dataId, group, 1000);
+                // 执行发生变更的操作
                 onDataIdValueChanged(dataId, config);
             } catch (NacosException e) {
                 log.warn("Failed to register Nacos listener for dataId: {}", dataId);
@@ -149,25 +165,35 @@ public class NacosConfigWatcherRegister extends ConfigWatcherRegister {
         }
     }
 
+    /**
+     * 移除不感兴趣的键和Listener
+     *
+     * @param interestedKeys {@link org.apache.skywalking.oap.server.configuration.api.ConfigWatcherRegister.WatcherHolder.key WatcherHolder.key}s
+     */
     private void removeUninterestedKeys(final Set<String> interestedKeys) {
         final String group = settings.getGroup();
 
+        // 不感兴趣的键
         final Set<String> uninterestedKeys = new HashSet<>(listenersByKey.keySet());
         uninterestedKeys.removeAll(interestedKeys);
 
         uninterestedKeys.forEach(k -> {
+            // 移除不感兴趣的键
             final Listener listener = listenersByKey.remove(k);
             if (listener != null) {
+                // 移除不感兴趣的listener
                 configService.removeListener(k, group, listener);
             }
         });
     }
 
+    /** 在naocs中配置的配置，发生变更后操作的操作 */
     void onDataIdValueChanged(String dataId, String configInfo) {
         if (log.isInfoEnabled()) {
             log.info("Nacos config changed: {}: {}", dataId, configInfo);
         }
 
+        // 将 新值 加入 this.configItemKeyedByName
         configItemKeyedByName.put(dataId, Optional.ofNullable(configInfo));
     }
 }
