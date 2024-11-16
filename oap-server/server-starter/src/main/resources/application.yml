@@ -425,7 +425,7 @@ telemetry:
 # 配置模块
 configuration:
   selector: ${SW_CONFIGURATION:none}
-  none:
+  none: # NoneConfigurationProvider
   grpc:
     host: ${SW_DCS_SERVER_HOST:""}
     port: ${SW_DCS_SERVER_PORT:80}
