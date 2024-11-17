@@ -26,6 +26,9 @@ import org.apache.skywalking.oap.server.telemetry.api.MetricsTag;
 
 /**
  * A no-op metrics create, just create nut shell metrics instance.
+ * <pre>
+ * (一个无操作的 MetricsCreator的实现类，只需创建 nut shell metrics 实例。)
+ * </pre>
  */
 public class MetricsCreatorNoop implements MetricsCreator {
     @Override

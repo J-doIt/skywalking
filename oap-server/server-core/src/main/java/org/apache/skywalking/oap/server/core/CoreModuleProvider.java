@@ -351,7 +351,7 @@ public class CoreModuleProvider extends ModuleProvider {
 
         // 初始化gRPC服务器实例地址，包含主机地址、端口以及是否SSL连接的标记
         Address gRPCServerInstanceAddress = new Address(moduleConfig.getGRPCHost(), moduleConfig.getGRPCPort(), true);
-        // 设置Telemetry上下文ID为gRPC服务器实例地址的字符串表示形式
+        // 设置 Telemetry上下文ID 为 gRPC服务器实例地址 的字符串表示形式
         TelemetryRelatedContext.INSTANCE.setId(gRPCServerInstanceAddress.toString());
         // 根据模块配置的角色决定是否注册gRPC服务器实例到集群中
         if (CoreModuleConfig.Role.Mixed.name()

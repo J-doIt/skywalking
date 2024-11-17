@@ -24,6 +24,9 @@ import org.apache.skywalking.oap.server.telemetry.api.MetricsCollector;
 
 /**
  * No-op MetricFamily Collector.
+ * <pre>
+ * (无操作的 MetricFamily 收集器。)
+ * </pre>
  */
 public class MetricsCollectorNoop implements MetricsCollector {
     @Override

@@ -413,6 +413,7 @@ alarm:
   selector: ${SW_ALARM:default}
   default:
 
+# 遥测模块（监控数据模块），负责Backend的网络遥测，例如Prometheus。
 telemetry:
   selector: ${SW_TELEMETRY:none}
   none:

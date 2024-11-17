@@ -24,12 +24,15 @@ import org.apache.skywalking.oap.server.library.module.Service;
  * Collect all metrics from telemetry.
  * <pre>
  * (从 telemetry 中收集所有指标。)
+ *
+ * 提供收集指标的API。
  * </pre>
  */
 public interface MetricsCollector extends Service {
 
     /**
      * Get all of metrics.
+     * （获取所有指标）
      *
      * @return all metrics
      */

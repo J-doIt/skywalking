@@ -20,6 +20,9 @@ package org.apache.skywalking.oap.server.library.util;
 
 /**
  * Health checker provides methods to register the health status.
+ * <pre>
+ * (Health Checker 提供注册运行状况的方法。)
+ * </pre>
  */
 public interface HealthChecker {
 

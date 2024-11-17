@@ -22,6 +22,10 @@ package org.apache.skywalking.oap.server.telemetry.api;
  * Tag for the target metrics.
  * <p>
  * The tag values should be set in putting value phase.
+ * <pre>
+ * (目标指标的Tag。
+ * Tag的值 应在 put value 阶段设置。)
+ * </pre>
  */
 public class MetricsTag {
     public static final Keys EMPTY_KEY = new Keys();

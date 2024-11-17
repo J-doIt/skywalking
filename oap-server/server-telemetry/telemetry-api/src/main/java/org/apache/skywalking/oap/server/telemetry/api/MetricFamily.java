@@ -25,6 +25,9 @@ import lombok.ToString;
 
 /**
  * MetricFamily define a metric and all its samples.
+ * <pre>
+ * (MetricFamily 定义一个指标及其所有样本。)
+ * </pre>
  */
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -34,6 +37,7 @@ public class MetricFamily {
     public final String name;
     public final Type type;
     public final String help;
+    /** 存放 样本 的list */
     public final List<Sample> samples;
 
     public enum Type {
@@ -42,6 +46,9 @@ public class MetricFamily {
 
     /**
      * A single Sample, with a unique name and set of labels.
+     * <pre>
+     * (单个样本，具有唯一的名称和标签集。)
+     * </pre>
      */
     @AllArgsConstructor
     @EqualsAndHashCode
@@ -51,7 +58,7 @@ public class MetricFamily {
         public final List<String> labelNames;
         public final List<String> labelValues;  // Must have same length as labelNames.
         public final double value;
-        public final Long timestampMs;  // It's an epoch format with milliseconds value included (this field is subject to change).
+        public final Long timestampMs;  // It's an epoch format with milliseconds value included (this field is subject to change).（它是包含毫秒值的纪元格式（此字段可能会更改）。）
 
     }
 }

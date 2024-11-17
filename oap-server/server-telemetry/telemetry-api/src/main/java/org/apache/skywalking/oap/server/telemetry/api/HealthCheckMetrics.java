@@ -23,9 +23,17 @@ import org.apache.skywalking.oap.server.library.util.HealthChecker;
 
 /**
  * HealthCheckMetrics intends to record health status.
+ * <pre>
+ * (HealthCheckMetrics 打算记录健康（运行）状况。)
+ * </pre>
  */
 @Slf4j
 public class HealthCheckMetrics implements HealthChecker {
+    /**
+     * 初始：-1
+     * 健康：0
+     * 不健康：1
+     */
     private final GaugeMetrics metrics;
 
     public HealthCheckMetrics(GaugeMetrics metrics) {

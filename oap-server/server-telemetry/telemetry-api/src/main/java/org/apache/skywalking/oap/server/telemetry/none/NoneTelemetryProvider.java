@@ -29,6 +29,9 @@ import org.apache.skywalking.oap.server.telemetry.api.MetricsCreator;
 
 /**
  * A nutshell telemetry implementor.
+ * <pre>
+ * (一个 nutshell 遥测实现类。)
+ * </pre>
  */
 public class NoneTelemetryProvider extends ModuleProvider {
     @Override
@@ -38,18 +41,24 @@ public class NoneTelemetryProvider extends ModuleProvider {
 
     @Override
     public Class<? extends ModuleDefine> module() {
+        // 遥测模块
         return TelemetryModule.class;
     }
 
     @Override
     public ModuleConfig createConfigBeanIfAbsent() {
+        // new 一个 空属性的 ModuleConfig
         return new ModuleConfig() {
         };
     }
 
     @Override
     public void prepare() throws ServiceNotProvidedException, ModuleStartException {
+        // Provider 的 prepare 阶段：
+
+        // 为 “遥测模块” 的 默认提供者 注册 MetricsCreator 的实现类
         this.registerServiceImplementation(MetricsCreator.class, new MetricsCreatorNoop());
+        // 为 “遥测模块” 的 默认提供者 注册 MetricsCollector 的实现类
         this.registerServiceImplementation(MetricsCollector.class, new MetricsCollectorNoop());
     }
 
@@ -65,6 +74,7 @@ public class NoneTelemetryProvider extends ModuleProvider {
 
     @Override
     public String[] requiredModules() {
+        // 该模块提供者所需的其他模块：
         return new String[0];
     }
 }

@@ -26,6 +26,8 @@ import org.apache.skywalking.oap.server.telemetry.api.MetricsCreator;
  * Telemetry module definition
  * <pre>
  * (遥测模块定义)
+ *
+ * 遥测模块（监控数据模块），负责Backend的网络遥测。
  * </pre>
  */
 public class TelemetryModule extends ModuleDefine {

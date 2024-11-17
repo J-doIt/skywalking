@@ -20,6 +20,9 @@ package org.apache.skywalking.oap.server.telemetry.api;
 
 /**
  * The telemetry context which the metrics instances may need to know.
+ * <pre>
+ * (指标实例可能需要了解的遥测上下文。)
+ * </pre>
  */
 public enum TelemetryRelatedContext {
     INSTANCE;
@@ -31,6 +34,9 @@ public enum TelemetryRelatedContext {
 
     /**
      * Set a global ID to represent the current oap instance
+     * <pre>
+     * (设置 全局ID 以表示当前 oap 实例)
+     * </pre>
      */
     public void setId(String id) {
         this.id = id;
@@ -38,6 +44,9 @@ public enum TelemetryRelatedContext {
 
     /**
      * Get the oap instance ID, if be set before.
+     * <pre>
+     * (获取 oap 实例 ID（如果之前已设置）。)
+     * </pre>
      *
      * @return id or null.
      */
