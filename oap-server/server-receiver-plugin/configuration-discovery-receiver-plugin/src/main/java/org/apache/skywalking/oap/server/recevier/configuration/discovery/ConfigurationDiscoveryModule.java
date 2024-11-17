@@ -20,6 +20,9 @@ package org.apache.skywalking.oap.server.recevier.configuration.discovery;
 
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
+/**
+ * 配置发现模块：configuration-discovery
+ */
 public class ConfigurationDiscoveryModule extends ModuleDefine {
     public static final String NAME = "configuration-discovery";
 
@@ -29,6 +32,7 @@ public class ConfigurationDiscoveryModule extends ModuleDefine {
 
     @Override
     public Class[] services() {
+        // 该模块提供的服务：
         return new Class[0];
     }
 }

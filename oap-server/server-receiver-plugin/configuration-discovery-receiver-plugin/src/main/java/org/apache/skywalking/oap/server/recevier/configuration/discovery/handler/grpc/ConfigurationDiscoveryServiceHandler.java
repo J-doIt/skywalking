@@ -39,11 +39,15 @@ import org.apache.skywalking.oap.server.recevier.configuration.discovery.AgentCo
 @Slf4j
 public class ConfigurationDiscoveryServiceHandler extends ConfigurationDiscoveryServiceGrpc.ConfigurationDiscoveryServiceImplBase implements GRPCHandler {
 
+    /** 配置变更观察者 */
     private final AgentConfigurationsWatcher agentConfigurationsWatcher;
 
     /**
      * If the current configuration is true, the requestId and uuid will not be judged, and the dynamic configuration of
      * the service corresponding to the agent will be returned directly
+     * <pre>
+     * (如果当前配置为 true，则不会判断 requestId 和 uuid，直接返回 agent 对应的服务的动态配置)
+     * </pre>
      */
     private boolean disableMessageDigest = false;
 
@@ -57,31 +61,47 @@ public class ConfigurationDiscoveryServiceHandler extends ConfigurationDiscovery
      * Process the request for querying the dynamic configuration of the agent.
      * If there is agent dynamic configuration information corresponding to the service,
      * the ConfigurationDiscoveryCommand is returned to represent the dynamic configuration information.
+     * （处理查询 Agent 动态配置的请求。
+     * 如果存在与服务对应的 Agent 动态配置信息，则返回 ConfigurationDiscoveryCommand 来表示动态配置信息。）
      */
     @Override
     public void fetchConfigurations(final ConfigurationSyncRequest request,
                                     final StreamObserver<Commands> responseObserver) {
+        // 构建通过grpc传输的Commands
         Commands.Builder commandsBuilder = Commands.newBuilder();
 
+        // 从 AgentConfigurationsWatcher 拿到 服务的动态配置信息。
         AgentConfigurations agentConfigurations = agentConfigurationsWatcher.getAgentConfigurations(
             request.getService());
         if (null != agentConfigurations) {
+            // 禁用消息摘要 或者 uuid（消息摘要）有变化
             if (disableMessageDigest || !Objects.equals(agentConfigurations.getUuid(), request.getUuid())) {
+                // 创建 ConfigurationDiscoveryCommand
                 ConfigurationDiscoveryCommand configurationDiscoveryCommand =
                     newAgentDynamicConfigCommand(agentConfigurations);
+                // 序列化 configurationDiscoveryCommand 后，add 到 commandsBuilder。
                 commandsBuilder.addCommands(configurationDiscoveryCommand.serialize().build());
             }
         }
+        // 使用 stream 发送 Commands 到 Agent
         responseObserver.onNext(commandsBuilder.build());
+        // stream 完成
         responseObserver.onCompleted();
     }
 
+    /**
+     * 创建 ConfigurationDiscoveryCommand，用于返回给 Agent 去执行。
+     * @param agentConfigurations Agent动态配置
+     * @return
+     */
     public ConfigurationDiscoveryCommand newAgentDynamicConfigCommand(AgentConfigurations agentConfigurations) {
+        // 构建 ConfigurationDiscoveryCommand 的 key-value
         List<KeyStringValuePair> configurationList = Lists.newArrayList();
         agentConfigurations.getConfiguration().forEach((k, v) -> {
             KeyStringValuePair.Builder builder = KeyStringValuePair.newBuilder().setKey(k).setValue(v);
             configurationList.add(builder.build());
         });
+        // 创建 ConfigurationDiscoveryCommand
         return new ConfigurationDiscoveryCommand(
             UUID.randomUUID().toString(), agentConfigurations.getUuid(), configurationList);
     }

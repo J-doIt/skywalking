@@ -25,7 +25,11 @@ import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 public class ConfigurationDiscoveryModuleConfig extends ModuleConfig {
     /**
      *  If true, agent receives the latest configuration every time even without change. 
-     *  In default, OAP uses SHA512 message digest mechanism to detect changes of configuration. 
+     *  In default, OAP uses SHA512 message digest mechanism to detect changes of configuration.
+     *  <pre>
+     * (如果为 true，则 agent 每次都会收到最新的配置，即使没有更改。
+     * 默认情况下，OAP 使用 SHA512消息摘要机制 来检测配置更改。)
+     * </pre>
      */
     @Setter
     @Getter

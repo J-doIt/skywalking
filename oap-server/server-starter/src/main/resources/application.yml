@@ -492,6 +492,7 @@ health-checker:
   default:
     checkIntervalSeconds: ${SW_HEALTH_CHECKER_INTERVAL_SECONDS:5}
 
+# 配置发现模块：
 configuration-discovery:
   selector: ${SW_CONFIGURATION_DISCOVERY:default}
   default:

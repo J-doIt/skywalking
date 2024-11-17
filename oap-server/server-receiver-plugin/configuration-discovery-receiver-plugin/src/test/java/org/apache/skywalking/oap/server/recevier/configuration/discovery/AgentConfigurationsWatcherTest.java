@@ -33,6 +33,7 @@ import org.powermock.reflect.Whitebox;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 
+/** AgentConfigurationsWatche 测试 */
 public class AgentConfigurationsWatcherTest {
     @Spy
     private AgentConfigurationsWatcher agentConfigurationsWatcher = new AgentConfigurationsWatcher(null);

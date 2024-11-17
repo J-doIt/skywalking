@@ -22,6 +22,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+/** Agent配置读取测试 */
 public class AgentConfigurationsReaderTest {
     @Test
     public void testReadAgentConfigurations() {

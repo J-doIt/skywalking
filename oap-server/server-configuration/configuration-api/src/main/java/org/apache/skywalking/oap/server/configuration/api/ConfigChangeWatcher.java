@@ -37,7 +37,7 @@ public abstract class ConfigChangeWatcher {
     private final String module;
     /** 模块提供者 */
     private final ModuleProvider provider;
-    /** 观察的项目名（单个属性、某个配置文件） */
+    /** 观察的项目名 */
     private final String itemName;
     /** 观察类型 */
     protected WatchType watchType;

@@ -26,11 +26,17 @@ import lombok.ToString;
 
 /**
  * Dynamic configuration items, save the dynamic configuration of the agent corresponding to the service.
+ * <pre>
+ * (动态配置项，保存服务对应的 agent 的动态配置。)
+ *
+ * Agent动态配置项
+ * </pre>
  */
 @Setter
 @Getter
 @ToString
 public class AgentConfigurationsTable {
+    /** ≤ AgentConfigurations.service , AgentConfigurations ≥ */
     private Map<String, AgentConfigurations> agentConfigurationsCache;
 
     public AgentConfigurationsTable() {

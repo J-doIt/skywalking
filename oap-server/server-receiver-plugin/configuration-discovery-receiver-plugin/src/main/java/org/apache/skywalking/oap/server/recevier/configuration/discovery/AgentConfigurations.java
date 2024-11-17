@@ -25,15 +25,25 @@ import lombok.ToString;
 
 /**
  * Dynamic configuration items, save the dynamic configuration of the agent corresponding to the service.
+ * <pre>
+ * (动态配置项，保存服务对应的 agent 的动态配置。)
+ *
+ * Agent动态配置项
+ * </pre>
  */
 @Setter
 @Getter
 @ToString
 public class AgentConfigurations {
+    /** yml 中 configurations 下的其中一个 key */
     private String service;
+    /** yml 中 configurations 下的 该key 对应的 value（map类型） */
     private Map<String, String> configuration;
     /**
      * The uuid is calculated by the dynamic configuration of the service.
+     * <pre>
+     * (uuid 由 service的动态配置（service:configuration）计算得出。)
+     * </pre>
      */
     private volatile String uuid;
 

@@ -31,9 +31,13 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * Used to parse the String configuration to AgentConfigurations.
+ * <pre>
+ * (用于将 String 配置解析为 AgentConfigurations。)
+ * </pre>
  */
 @Slf4j
 public class AgentConfigurationsReader {
+    /** yaml 配置数据的 map 形式 */
     private Map yamlData;
 
     public AgentConfigurationsReader(InputStream inputStream) {
@@ -41,33 +45,43 @@ public class AgentConfigurationsReader {
         yamlData = (Map) yaml.load(inputStream);
     }
 
+    /**
+     * @param io yaml 中的 configurations 的内容
+     */
     public AgentConfigurationsReader(Reader io) {
         Yaml yaml = new Yaml(new SafeConstructor());
         yamlData = (Map) yaml.load(io);
     }
 
+    /**
+     * 将 String（yml下的configurations） 配置解析为 AgentConfigurationsTable。
+     * @return
+     */
     public AgentConfigurationsTable readAgentConfigurationsTable() {
         AgentConfigurationsTable agentConfigurationsTable = new AgentConfigurationsTable();
         try {
             if (Objects.nonNull(yamlData)) {
                 Map configurationsData = (Map) yamlData.get("configurations");
                 if (configurationsData != null) {
-                    configurationsData.forEach((k, v) -> {
+                    configurationsData.forEach((k/* AgentConfigurations.service */, v/* map */) -> {
                         Map map = (Map) v;
                         StringBuilder serviceConfigStr = new StringBuilder();
                         Map<String, String> config = new HashMap<>(map.size());
                         map.forEach((key, value) -> {
+                            // 将 map 的 key-value 放入 config
                             config.put(key.toString(), value.toString());
-
+                            // 将 key:value 拼接到 serviceConfigStr
                             serviceConfigStr.append(key).append(":").append(value);
                         });
 
                         // noinspection UnstableApiUsage
+                        // new 一个 AgentConfigurations
                         AgentConfigurations agentConfigurations = new AgentConfigurations(
                             k.toString(), config,
-                            Hashing.sha512().hashString(
+                            Hashing.sha512().hashString(/* 通过 Hashing.sha512 为 “key:value” 生成 uuid */
                                 serviceConfigStr.toString(), StandardCharsets.UTF_8).toString()
                         );
+                        // put 到 agentConfigurationsTable
                         agentConfigurationsTable.getAgentConfigurationsCache()
                                                 .put(agentConfigurations.getService(), agentConfigurations);
                     });

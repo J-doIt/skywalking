@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# agent动态配置
 configurations:
   serviceA:
     trace.sample_rate: 1000
