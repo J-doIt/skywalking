@@ -31,6 +31,19 @@ import org.apache.skywalking.oap.server.library.module.ModuleDefine;
  * consideration, receiver should open TLS and token check, and internal(remote module) traffic should base on trusted
  * network, no TLS and token check. Even some companies may require TLS internally, it still use different TLS keys. In
  * this specific case, we recommend users to consider use {@link org.apache.skywalking.oap.server.core.CoreModuleConfig.Role}.
+ *
+ * <pre>
+ * (共享服务器 是为 所有接收模块 提供 独立的gRPC和Jetty服务器。
+ *
+ * 默认情况下，除非用户显式激活，否则该模块不会被激活。它只委托核心gRPC和Jetty服务器。
+ * 一旦它被激活，就会提供独立的服务器，然后所有接收方都使用这些服务器来接受外部请求。
+ *
+ * 通常，激活此选项是为了避免在接收端和内部通信流之间共享ip、端口和线程池。
+ * 出于安全考虑，接收方应打开TLS和令牌检查，内部（远程模块）流量应基于可信网络，不进行TLS和令牌检查。
+ * 即使一些公司内部可能需要TLS，它仍然使用不同的TLS密钥。在这种特殊情况下，我们建议用户考虑使用 CoreModuleConfig.Role。)
+ *
+ * 共享服务模块（“接收器”共享“内部（CoreModule模块）”的gRPC和Jetty服务）
+ * </pre>
  */
 public class SharingServerModule extends ModuleDefine {
 
@@ -42,9 +55,10 @@ public class SharingServerModule extends ModuleDefine {
 
     @Override
     public Class[] services() {
+        // 该模块提供的服务：
         return new Class[] {
-            GRPCHandlerRegister.class,
-            JettyHandlerRegister.class
+            GRPCHandlerRegister.class, // GrpcHandler注册服务
+            JettyHandlerRegister.class // JettyHandler注册服务
         };
     }
 }

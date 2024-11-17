@@ -28,6 +28,9 @@ public class SharingServerConfig extends ModuleConfig {
     private String restHost;
     /**
      * Only setting the real port(not 0) makes the jetty server online.
+     * <pre>
+     * (只有设置真实端口（不是 0）才能使 jetty 服务器 在线。)
+     * </pre>
      */
     private int restPort;
     private String restContextPath;
@@ -40,13 +43,18 @@ public class SharingServerConfig extends ModuleConfig {
     private String gRPCHost;
     /**
      * Only setting the real port(not 0) makes the gRPC server online.
+     * <pre>
+     * (只有设置真实端口（不是 0）才会使 gRPC服务器 在线。)
+     * </pre>
      */
     private int gRPCPort;
     private int maxConcurrentCallsPerConnection;
     private int maxMessageSize;
     private int gRPCThreadPoolSize;
     private int gRPCThreadPoolQueueSize;
+    /** 用于身份验证的令牌文本。仅适用于 gRPC 连接。设置后，客户端需要使用相同的令牌。 */
     private String authentication;
+    /** 为 gRPC 服务激活 SSL。 */
     private boolean gRPCSslEnabled = false;
     private String gRPCSslKeyPath;
     private String gRPCSslCertChainPath;

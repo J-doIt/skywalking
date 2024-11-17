@@ -271,6 +271,7 @@ event-analyzer:
   selector: ${SW_EVENT_ANALYZER:default}
   default:
 
+# 共享服务模块
 receiver-sharing-server:
   selector: ${SW_RECEIVER_SHARING_SERVER:default}
   default:

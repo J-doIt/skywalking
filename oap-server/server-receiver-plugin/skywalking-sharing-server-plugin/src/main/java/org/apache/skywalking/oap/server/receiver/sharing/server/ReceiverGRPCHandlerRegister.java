@@ -27,8 +27,14 @@ import java.util.List;
 import lombok.Setter;
 import org.apache.skywalking.oap.server.core.server.GRPCHandlerRegister;
 
+/**
+ * Provider 的 prepare 阶段时，Provider的grpc服务为空时，作为 GRPCHandlerRegister 实现类。
+ */
 public class ReceiverGRPCHandlerRegister implements GRPCHandlerRegister {
 
+    /**
+     * Provider 的 start 阶段，将 CoreModule提供者 的 GRPCHandlerRegister 实现类设置给它。
+     */
     @Setter
     private GRPCHandlerRegister grpcHandlerRegister;
     private List<ServerInterceptor> interceptors = new LinkedList<>();
