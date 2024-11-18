@@ -78,6 +78,7 @@ public class PrometheusGaugeMetrics extends BaseMetrics<Gauge, Gauge.Child> impl
 
     @Override
     protected Gauge create(String[] labelNames) {
+        // 创建真实的 prometheus 指标，并注册
         return Gauge.build().name(name).help(tips).labelNames(labelNames).register();
     }
 }

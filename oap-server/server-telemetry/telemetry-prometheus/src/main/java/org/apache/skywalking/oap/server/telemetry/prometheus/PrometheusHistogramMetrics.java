@@ -50,6 +50,7 @@ public class PrometheusHistogramMetrics extends HistogramMetrics {
 
         @Override
         protected Histogram create(String[] labelNames) {
+            // 创建真实的 prometheus 指标，并注册
             Histogram.Builder builder = Histogram.build().name(name).help(tips);
             if (builder != null && buckets.length > 0) {
                 builder = builder.buckets(buckets);

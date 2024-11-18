@@ -35,33 +35,44 @@ import org.apache.skywalking.oap.server.telemetry.prometheus.PrometheusConfig;
 /**
  * An HTTP server that sends back the content of the received HTTP request
  * in a pretty plaintext form.
+ * <pre>
+ * (一个 HTTP 服务器，它以非常纯文本的形式 sends back 收到的 HTTP 请求的内容。)
+ * 一个Http服务，暴露Prometheus监控指标的端口。这使得外部监控系统（Prometheus）可以拉取 OAP收集到的指标数据。
+ * </pre>
  */
 @RequiredArgsConstructor
 @Slf4j
 public final class HttpServer {
 
+    /** Prometheus 的 ModuleConfig */
     private final PrometheusConfig config;
 
     public void start() throws InterruptedException {
         // Configure SSL.
+        // （配置SSL）
         final HttpDynamicSslContext sslCtx;
         if (config.isSslEnabled()) {
+            // 如果启用了SSL，则使用配置的密钥和证书链路径创建SSL上下文
             sslCtx = HttpDynamicSslContext.forServer(config.getSslKeyPath(), config.getSslCertChainPath());
         } else {
             sslCtx = null;
         }
 
         // Configure the server.
-        ThreadFactory tf = new ThreadFactoryBuilder().setDaemon(true).build();
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1, tf);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(0, tf);
+        // 通过netty配置服务器
+
+        ThreadFactory tf = new ThreadFactoryBuilder().setDaemon(true).build(); // 创建一个守护线程工厂
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1, tf); // 创建Boss线程组，用于处理新连接
+        EventLoopGroup workerGroup = new NioEventLoopGroup(0, tf); // 创建Worker线程组，用于处理I/O操作
         ServerBootstrap b = new ServerBootstrap();
         b.group(bossGroup, workerGroup)
-            .channel(NioServerSocketChannel.class)
-            .handler(new LoggingHandler(LogLevel.INFO))
-            .childHandler(new HttpServerInitializer(sslCtx));
+            .channel(NioServerSocketChannel.class) // 设置NIO通道
+            .handler(new LoggingHandler(LogLevel.INFO)) // 添加日志处理器
+            .childHandler(new HttpServerInitializer(sslCtx)); // 使用 ChannelInitializer 定义子处理器
 
+        // 绑定服务器到指定的主机和端口，并同步等待绑定完成
         b.bind(config.getHost(), config.getPort()).sync();
+        // 如果SSL上下文不为空，则启动SSL上下文
         Optional.ofNullable(sslCtx).ifPresent(HttpDynamicSslContext::start);
 
         log.info("Prometheus exporter endpoint:" +

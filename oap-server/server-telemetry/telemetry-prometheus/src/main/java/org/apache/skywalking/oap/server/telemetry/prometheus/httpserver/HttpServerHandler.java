@@ -45,14 +45,23 @@ import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
+/**
+ * <pre>
+ * 简单通道入栈处理器的实现类，接收 HttpObject 类型的消息。
+ * 用于将 注册表（CollectorRegistry） 中的 指标数据，发送给 Prometheus。
+ * </pre>
+ */
 @Slf4j
 public class HttpServerHandler  extends SimpleChannelInboundHandler<HttpObject> {
 
+    /** prometheus 的用于管理和注册指标的收集器 */
     private final CollectorRegistry registry = CollectorRegistry.defaultRegistry;
+    /** 写缓冲区 */
     private final StringBuilderWriter buf = new StringBuilderWriter();
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
+        // 将缓冲区中的数据立即写出到对端
         ctx.flush();
     }
 
@@ -61,32 +70,41 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<HttpObject> 
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
+            // 判断请求是否需要保持连接
             boolean keepAlive = HttpUtil.isKeepAlive(req);
 
+            // 清空缓冲区
             buf.getBuilder().setLength(0);
             try {
+                // 将 注册表 中的 指标数据 写入缓冲区
                 TextFormat.write004(buf, registry.metricFamilySamples());
             } catch (IOException e) {
                 ctx.fireExceptionCaught(e);
                 return;
             }
+            // 创建响应对象，设置状态码为 200 OK，并将 缓冲区中的内容 作为 响应体
             FullHttpResponse response = new DefaultFullHttpResponse(req.protocolVersion(), OK,
                 Unpooled.copiedBuffer(buf.getBuilder().toString(), CharsetUtil.UTF_8));
+            // 设置响应头
             response.headers()
-                .set(CONTENT_TYPE, TEXT_PLAIN)
-                .setInt(CONTENT_LENGTH, response.content().readableBytes());
+                .set(CONTENT_TYPE, TEXT_PLAIN) // 设置内容类型为纯文本
+                .setInt(CONTENT_LENGTH, response.content().readableBytes()); // 设置内容长度
 
             if (keepAlive) {
+                // 如果请求版本不支持默认的连接保持，则显式设置 Connection: keep-alive
                 if (!req.protocolVersion().isKeepAliveDefault()) {
                     response.headers().set(CONNECTION, KEEP_ALIVE);
                 }
             } else {
                 // Tell the client we're going to close the connection.
+                // 如果不需要保持连接，设置 Connection: close
                 response.headers().set(CONNECTION, CLOSE);
             }
 
+            // 写入响应
             ChannelFuture f = ctx.write(response);
 
+            // 如果不需要保持连接，则在写入完成后关闭连接
             if (!keepAlive) {
                 f.addListener(CLOSE);
             }
@@ -96,9 +114,12 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<HttpObject> 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("Prometheus exporter error", cause);
+        // 创建失败的应答
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
             INTERNAL_SERVER_ERROR,
             Unpooled.wrappedBuffer(cause.getMessage().getBytes()));
+        // 将 response 写回客户端，
+        // 并添加一个 ChannelFutureListener，用于关闭 指定 ChannelFuture（异步Channel I/O 操作的结果） 关联的 Channel。
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
         ctx.close();
     }

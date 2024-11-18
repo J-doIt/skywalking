@@ -16,5 +16,5 @@
 #
 #
 
-
+# SPI
 org.apache.skywalking.oap.server.telemetry.prometheus.PrometheusTelemetryProvider

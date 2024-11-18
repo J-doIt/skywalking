@@ -24,11 +24,20 @@ import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 
 /**
  * The Prometheus telemetry implementor settings.
+ * （Prometheus 遥测实现类的设置。）
  */
 @Setter
 @Getter
 public class PrometheusConfig extends ModuleConfig {
+    /**
+     * Binding host for Prometheus server fetching data.
+     * 绑定主机，为 Prometheus服务器 获取数据。
+     */
     private String host = "0.0.0.0";
+    /**
+     * Binding port for Prometheus server fetching data.
+     * 绑定端口，为 Prometheus服务器 获取数据。
+     */
     private int port = 1234;
     private boolean sslEnabled = false;
     private String sslKeyPath;

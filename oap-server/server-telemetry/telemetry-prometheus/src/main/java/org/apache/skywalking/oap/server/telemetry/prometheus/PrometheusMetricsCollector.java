@@ -27,18 +27,34 @@ import java.util.List;
 import org.apache.skywalking.oap.server.telemetry.api.MetricFamily;
 import org.apache.skywalking.oap.server.telemetry.api.MetricsCollector;
 
+/**
+ * 用于获取 Prometheus 收集到的指标数据， 并将 Prometheus 格式的指标数据 转为 MetricFamily，
+ */
 public class PrometheusMetricsCollector implements MetricsCollector {
+
     @Override public Iterable<MetricFamily> collect() {
+        // 从 默认的CollectorRegistry 中获取所有 MetricFamilySamples
         Enumeration<Collector.MetricFamilySamples> mfs = CollectorRegistry.defaultRegistry.metricFamilySamples();
         List<MetricFamily> result = new LinkedList<>();
+        // 遍历所有的 MetricFamilySamples
         while (mfs.hasMoreElements()) {
             Collector.MetricFamilySamples metricFamilySamples = mfs.nextElement();
             List<MetricFamily.Sample> samples = new ArrayList<>(metricFamilySamples.samples.size());
-            MetricFamily m = new MetricFamily(metricFamilySamples.name, MetricFamily.Type.valueOf(metricFamilySamples.type
-                .name()), metricFamilySamples.help, samples);
+            // new 一个 MetricFamily，并添加到 result。
+            MetricFamily m = new MetricFamily(
+                    metricFamilySamples.name,
+                    MetricFamily.Type.valueOf(metricFamilySamples.type.name()),
+                    metricFamilySamples.help,
+                    samples); // 指标样本的列表
             result.add(m);
+
+            // 遍历所有样本
             for (Collector.MetricFamilySamples.Sample sample : metricFamilySamples.samples) {
-                samples.add(new MetricFamily.Sample(sample.name, sample.labelNames, sample.labelValues, sample.value, sample.timestampMs));
+                // new 一个 MetricFamily.Sample，并添加到 samples。
+                samples.add(
+                        new MetricFamily.Sample(
+                                sample.name, sample.labelNames, sample.labelValues,
+                                sample.value, sample.timestampMs));
             }
         }
         return result;

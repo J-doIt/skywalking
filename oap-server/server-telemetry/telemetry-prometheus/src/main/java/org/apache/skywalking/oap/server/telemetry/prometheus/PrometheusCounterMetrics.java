@@ -49,6 +49,7 @@ public class PrometheusCounterMetrics extends BaseMetrics<Counter, Counter.Child
 
     @Override
     protected Counter create(String[] labelNames) {
+        // 创建真实的 prometheus 指标，并注册
         return Counter.build().name(name).help(tips).labelNames(labelNames).register();
     }
 }

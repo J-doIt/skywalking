@@ -27,8 +27,13 @@ import org.apache.skywalking.oap.server.telemetry.api.TelemetryRelatedContext;
 
 /**
  * BaseMetrics parent class represents the metrics
+ * 
+ * @param <C>
+ * @param <T> 继承了SimpleCollector的指标（真实的 prometheus 指标）
  */
 public abstract class BaseMetrics<T extends SimpleCollector, C> {
+
+    /** ≤ this.name , T（真实的 prometheus 指标） ≥ */
     private static Map<String, Object> ALL_METRICS = new HashMap<>();
 
     private volatile C metricsInstance;
@@ -46,12 +51,17 @@ public abstract class BaseMetrics<T extends SimpleCollector, C> {
     }
 
     protected boolean isIDReady() {
+        // OAP 的 Core模块 start 时，会将 gRPC服务器实例地址 的字符串形式 设置为 Telemetry上下文ID。
         return TelemetryRelatedContext.INSTANCE.getId() != null;
     }
 
     /**
      * Create real prometheus metrics with SkyWalking native labels, and provide to all metrics implementation. Metrics
      * name should be unique.
+     * <pre>
+     * (使用 SkyWalking 原生标签创建真实的 prometheus 指标，并提供给所有指标实现。
+     * Metrics name 应是唯一的。)
+     * </pre>
      *
      * @return metric reference if the service instance id has been initialized. Or NULL.
      */
@@ -61,6 +71,9 @@ public abstract class BaseMetrics<T extends SimpleCollector, C> {
                 lock.lock();
                 try {
                     if (metricsInstance == null) {
+
+                        // 将 SW 格式的 指标转为 prometheus 格式的指标。
+
                         String[] labelNames = new String[labels.getKeys().length + 1];
                         labelNames[0] = "sw_backend_instance";
                         for (int i = 0; i < labels.getKeys().length; i++) {
@@ -76,6 +89,7 @@ public abstract class BaseMetrics<T extends SimpleCollector, C> {
                         if (!ALL_METRICS.containsKey(name)) {
                             synchronized (ALL_METRICS) {
                                 if (!ALL_METRICS.containsKey(name)) {
+                                    // 创建真实的 prometheus 指标，并 put 到 ALL_METRICS。
                                     ALL_METRICS.put(name, create(labelNames));
                                 }
                             }
@@ -94,5 +108,6 @@ public abstract class BaseMetrics<T extends SimpleCollector, C> {
         return metricsInstance;
     }
 
+    /** 创建真实的 prometheus 指标 */
     protected abstract T create(String[] labelNames);
 }

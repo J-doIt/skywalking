@@ -36,6 +36,8 @@ import org.apache.skywalking.oap.server.telemetry.prometheus.httpserver.HttpServ
  * </pre>
  */
 public class PrometheusTelemetryProvider extends ModuleProvider {
+
+    /** Prometheus 的 ModuleConfig */
     private PrometheusConfig config;
 
     public PrometheusTelemetryProvider() {
@@ -49,6 +51,7 @@ public class PrometheusTelemetryProvider extends ModuleProvider {
 
     @Override
     public Class<? extends ModuleDefine> module() {
+        // 遥测模块
         return TelemetryModule.class;
     }
 
@@ -59,15 +62,14 @@ public class PrometheusTelemetryProvider extends ModuleProvider {
 
     @Override
     public void prepare() throws ServiceNotProvidedException, ModuleStartException {
-        // 注册 MetricsCreator 接口的实现类 PrometheusMetricsCreator 到服务中，
-        // 使得其它模块可以通过服务发现机制使用 Prometheus 的方式来创建度量指标。
+        // Provider 的 prepare 阶段：
+
+        // 注册 MetricsCreator 接口的实现类 PrometheusMetricsCreator 到 Prometheus服务提供者 中
         this.registerServiceImplementation(MetricsCreator.class, new PrometheusMetricsCreator());
-        // 注册 MetricsCollector 接口的实现类 PrometheusMetricsCollector 到服务中，
-        // 用于 收集度量数据 并 适配 Prometheus 的数据格式。
+        // 注册 MetricsCollector 接口的实现类 PrometheusMetricsCollector 到 Prometheus服务提供者 中
         this.registerServiceImplementation(MetricsCollector.class, new PrometheusMetricsCollector());
         try {
-            // 初始化并启动一个基于配置的HTTP服务器，用于暴露Prometheus监控指标的端点。
-            // 这使得外部监控系统可以拉取这些指标数据。
+            // 初始化并启动一个HTTP服务器，暴露Prometheus监控指标的端口
             new HttpServer(config).start();
         } catch (InterruptedException e) {
             throw new ModuleStartException(e.getMessage(), e);

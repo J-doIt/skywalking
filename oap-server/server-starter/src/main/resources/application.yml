@@ -417,7 +417,7 @@ alarm:
 telemetry:
   selector: ${SW_TELEMETRY:none}
   none:
-  prometheus:
+  prometheus: # PrometheusTelemetryProvider
     host: ${SW_TELEMETRY_PROMETHEUS_HOST:0.0.0.0}
     port: ${SW_TELEMETRY_PROMETHEUS_PORT:1234}
     sslEnabled: ${SW_TELEMETRY_PROMETHEUS_SSL_ENABLED:false}
