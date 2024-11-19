@@ -42,6 +42,9 @@ import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 
+/**
+ * 【拓扑查询服务】
+ */
 @Slf4j
 public class TopologyQueryService implements Service {
     private final ModuleManager moduleManager;
@@ -68,6 +71,7 @@ public class TopologyQueryService implements Service {
         return componentLibraryCatalogService;
     }
 
+    /** 获取全局拓扑 */
     public Topology getGlobalTopology(final long startTB,
                                       final long endTB) throws IOException {
         List<Call.CallDetail> serviceRelationServerCalls = getTopologyQueryDAO().loadServiceRelationsDetectedAtServerSide(
@@ -79,6 +83,7 @@ public class TopologyQueryService implements Service {
         return builder.build(serviceRelationClientCalls, serviceRelationServerCalls);
     }
 
+    /** 获取服务拓扑 */
     public Topology getServiceTopology(final long startTB, final long endTB,
                                        final List<String> serviceIds) throws IOException {
         List<Call.CallDetail> serviceRelationClientCalls = getTopologyQueryDAO().loadServiceRelationDetectedAtClientSide(
@@ -121,6 +126,7 @@ public class TopologyQueryService implements Service {
         return topology;
     }
 
+    /** 获取服务实例拓扑 */
     public ServiceInstanceTopology getServiceInstanceTopology(final String clientServiceId,
                                                               final String serverServiceId,
                                                               final long startTB,
@@ -134,6 +140,7 @@ public class TopologyQueryService implements Service {
         return builder.build(serviceInstanceRelationClientCalls, serviceInstanceRelationServerCalls);
     }
 
+    /** 获取端点拓扑 */
     @Deprecated
     public Topology getEndpointTopology(final long startTB, final long endTB,
                                         final String endpointId) throws IOException {
@@ -165,6 +172,7 @@ public class TopologyQueryService implements Service {
         return topology;
     }
 
+    /** 获取端点依赖 */
     public EndpointTopology getEndpointDependencies(final long startTB, final long endTB,
                                                     final String endpointId) throws IOException {
         List<Call.CallDetail> serverSideCalls = getTopologyQueryDAO().loadEndpointRelation(
@@ -195,6 +203,7 @@ public class TopologyQueryService implements Service {
         return topology;
     }
 
+    /** 构建端点节点 */
     @Deprecated
     private Node buildEndpointNode(String endpointId) {
         Node node = new Node();
@@ -207,6 +216,7 @@ public class TopologyQueryService implements Service {
         return node;
     }
 
+    /** 构建端点的依赖节点 */
     private EndpointNode buildEndpointDependencyNode(String endpointId) {
         final IDManager.EndpointID.EndpointIDDefinition endpointIDDefinition = IDManager.EndpointID.analysisId(
             endpointId);

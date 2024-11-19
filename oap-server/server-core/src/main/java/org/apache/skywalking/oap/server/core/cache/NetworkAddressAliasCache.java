@@ -29,9 +29,15 @@ import org.apache.skywalking.oap.server.library.module.Service;
 /**
  * NetworkAddressAliasCache set the temporary network address - service/instance mapping in the memory cache. This data
  * was original analysis from reference of trace span.
+ * <pre>
+ * (NetworkAddressAliasCache 设置 内存缓存中 的 临时网络地址-服务/实例 的映射。此数据是来自 trace span 引用的原始 analysis。)
+ * 【服务/实例的临时网络地址的缓存】
+ * </pre>
  */
 @Slf4j
 public class NetworkAddressAliasCache implements Service {
+
+    /** ≤ NetworkAddressAlias.address , NetworkAddressAlias ≥ */
     private final Cache<String, NetworkAddressAlias> networkAddressAliasCache;
 
     public NetworkAddressAliasCache(CoreModuleConfig moduleConfig) {
@@ -51,6 +57,7 @@ public class NetworkAddressAliasCache implements Service {
         return networkAddressAliasCache.getIfPresent(address);
     }
 
+    /** 加载 */
     void load(List<NetworkAddressAlias> networkAddressAliasList) {
         networkAddressAliasList.forEach(networkAddressAlias -> {
             networkAddressAliasCache.put(networkAddressAlias.getAddress(), networkAddressAlias);

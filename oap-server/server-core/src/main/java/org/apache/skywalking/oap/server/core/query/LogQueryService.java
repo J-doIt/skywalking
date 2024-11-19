@@ -35,6 +35,9 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 import static java.util.Objects.nonNull;
 
+/**
+ * 【日志查询服务】
+ */
 public class LogQueryService implements Service {
 
     private final ModuleManager moduleManager;
@@ -51,10 +54,12 @@ public class LogQueryService implements Service {
         return logQueryDAO;
     }
 
+    /** 按关键字查询日志 */
     public boolean supportQueryLogsByKeywords() {
         return getLogQueryDAO().supportQueryLogsByKeywords();
     }
 
+    /** 查询日志 */
     public Logs queryLogs(String serviceId,
                           String serviceInstanceId,
                           String endpointId,

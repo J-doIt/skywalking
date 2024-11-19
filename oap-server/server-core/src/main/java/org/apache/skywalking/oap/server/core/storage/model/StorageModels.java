@@ -41,6 +41,7 @@ import org.apache.skywalking.oap.server.core.storage.annotation.ValueColumnMetad
 @Slf4j
 public class StorageModels implements IModelManager, ModelCreator, ModelManipulator {
     private final List<Model> models;
+    /** ≤ oldName , newName ≥ */
     private final HashMap<String, String> columnNameOverrideRule;
     private final List<CreatingListener> listeners;
 
@@ -57,6 +58,7 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
 
         List<ModelColumn> modelColumns = new ArrayList<>();
         List<ExtraQueryIndex> extraQueryIndices = new ArrayList<>();
+        // 读取 模型列元数据
         retrieval(aClass, storage.getModelName(), modelColumns, extraQueryIndices, scopeId);
 
         Model model = new Model(
@@ -67,9 +69,11 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
             storage.isTimeRelativeID()
         );
 
+        // 遵循列名规则
         this.followColumnNameRules(model);
         models.add(model);
 
+        // 通知监听器
         for (final CreatingListener listener : listeners) {
             listener.whenCreating(model);
         }
@@ -83,6 +87,10 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
     /**
      * CreatingListener listener could react when {@link #add(Class, int, Storage, boolean)} model happens. Also, the
      * added models are being notified in this add operation.
+     * <pre>
+     * (CreatingListener监听器 可以在 add(Class, int, Storage, boolean) model 发生时做出反应。
+     * 此外，已经添加的 models 将在此添加操作中得到通知。)
+     * </pre>
      */
     @Override
     public void addModelListener(final CreatingListener listener) throws StorageException {
@@ -94,6 +102,9 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
 
     /**
      * Read model column metadata based on the class level definition.
+     * <pre>
+     * (根据 类级别定义 读取 模型列元数据。)
+     * </pre>
      */
     private void retrieval(final Class<?> clazz,
                            final String modelName,
@@ -104,13 +115,17 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
             log.debug("Analysis {} to generate Model.", clazz.getName());
         }
 
+        // 获取类的所有声明字段
         Field[] fields = clazz.getDeclaredFields();
 
+        // 遍历所有字段
         for (Field field : fields) {
+            // 检查字段是否带有 @Column 注解
             if (field.isAnnotationPresent(Column.class)) {
                 Column column = field.getAnnotation(Column.class);
                 // Use the column#length as the default column length, as read the system env as the override mechanism.
                 // Log the error but don't block the startup sequence.
+                // （使用 column#length 作为默认列长度，将 system env 读取为覆盖机制。）
                 int columnLength = column.length();
                 final String lengthEnvVariable = column.lengthEnvVariable();
                 if (StringUtil.isNotEmpty(lengthEnvVariable)) {
@@ -125,6 +140,7 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
                         }
                     }
                 }
+                // 创建 ModelColumn 对象并添加到 modelColumns 列表中
                 modelColumns.add(
                     new ModelColumn(
                         new ColumnName(modelName, column.columnName()), field.getType(), field.getGenericType(),
@@ -134,6 +150,7 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
                 if (log.isDebugEnabled()) {
                     log.debug("The field named {} with the {} type", column.columnName(), field.getType());
                 }
+                // 如果列是值类型，则将其元数据存储在 ValueColumnMetadata 中
                 if (column.dataType().isValue()) {
                     ValueColumnMetadata.INSTANCE.putIfAbsent(
                         modelName, column.columnName(), column.dataType(), column.function(),
@@ -142,10 +159,12 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
                 }
 
                 List<QueryUnifiedIndex> indexDefinitions = new ArrayList<>();
+                // 检查字段是否带有 @QueryUnifiedIndex 注解
                 if (field.isAnnotationPresent(QueryUnifiedIndex.class)) {
                     indexDefinitions.add(field.getAnnotation(QueryUnifiedIndex.class));
                 }
 
+                // 检查字段是否带有 @MultipleQueryUnifiedIndex 注解
                 if (field.isAnnotationPresent(MultipleQueryUnifiedIndex.class)) {
                     Collections.addAll(indexDefinitions, field.getAnnotation(MultipleQueryUnifiedIndex.class).value());
                 }
@@ -157,6 +176,7 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
             }
         }
 
+        // 递归处理父类
         if (Objects.nonNull(clazz.getSuperclass())) {
             retrieval(clazz.getSuperclass(), modelName, modelColumns, extraQueryIndices, scopeId);
         }
@@ -168,6 +188,7 @@ public class StorageModels implements IModelManager, ModelCreator, ModelManipula
         models.forEach(this::followColumnNameRules);
     }
 
+    /** 遵循列名规则 */
     private void followColumnNameRules(Model model) {
         columnNameOverrideRule.forEach((oldName, newName) -> {
             model.getColumns().forEach(column -> column.getColumnName().overrideName(oldName, newName));

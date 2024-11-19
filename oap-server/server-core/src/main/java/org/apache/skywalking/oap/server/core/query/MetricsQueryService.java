@@ -31,6 +31,9 @@ import org.apache.skywalking.oap.server.core.storage.query.IMetricsQueryDAO;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * 【指标数据查询服务】
+ */
 @Slf4j
 public class MetricsQueryService implements Service {
     private final ModuleManager moduleManager;
@@ -49,6 +52,9 @@ public class MetricsQueryService implements Service {
 
     /**
      * Read metrics single value in the duration of required metrics
+     * <pre>
+     * (在所需度量的持续时间内读取指标的单个值)
+     * </pre>
      */
     public long readMetricsValue(MetricsCondition condition, Duration duration) throws IOException {
         return getMetricQueryDAO().readMetricsValue(
@@ -57,6 +63,9 @@ public class MetricsQueryService implements Service {
 
     /**
      * Read time-series values in the duration of required metrics
+     * <pre>
+     * (在所需度量的持续时间内读取时间序列值)
+     * </pre>
      */
     public MetricsValues readMetricsValues(MetricsCondition condition, Duration duration) throws IOException {
         return getMetricQueryDAO().readMetricsValues(
@@ -65,6 +74,9 @@ public class MetricsQueryService implements Service {
 
     /**
      * Read value in the given time duration, usually as a linear.
+     * <pre>
+     * (在给定的持续时间内读取值，通常为线性值。)
+     * </pre>
      *
      * @param labels the labels you need to query.
      */
@@ -77,6 +89,9 @@ public class MetricsQueryService implements Service {
 
     /**
      * Heatmap is bucket based value statistic result.
+     * <pre>
+     * (Heatmap 是基于桶的值统计结果。)
+     * </pre>
      */
     public HeatMap readHeatMap(MetricsCondition condition, Duration duration) throws IOException {
         return getMetricQueryDAO().readHeatMap(

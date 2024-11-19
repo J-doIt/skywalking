@@ -32,6 +32,9 @@ import java.util.Objects;
 import static java.util.Objects.isNull;
 import static org.apache.skywalking.apm.util.StringUtil.isBlank;
 
+/**
+ * 【事件查询服务】
+ */
 public class EventQueryService implements Service {
 
     private final ModuleManager moduleManager;
@@ -49,6 +52,7 @@ public class EventQueryService implements Service {
         return dao;
     }
 
+    /** 查询事件 */
     public Events queryEvents(final EventQueryCondition condition) throws Exception {
         if (isBlank(condition.getUuid()) && isDurationInvalid(condition.getTime())) {
             throw new IllegalArgumentException("time field is required when uuid is absent.");
@@ -56,6 +60,7 @@ public class EventQueryService implements Service {
         return getDao().queryEvents(condition);
     }
 
+    /** 查询事件 */
     public Events queryEvents(final List<EventQueryCondition> conditions) throws Exception {
         EventQueryCondition condition = conditions.stream().filter(c -> isBlank(c.getUuid()) && isDurationInvalid(c.getTime())).findFirst().orElse(null);
         if (Objects.nonNull(condition)) {
@@ -64,6 +69,9 @@ public class EventQueryService implements Service {
         return getDao().queryEvents(conditions);
     }
 
+    /**
+     * @return true：持续时间无效
+     */
     boolean isDurationInvalid(final Duration duration) {
         return isNull(duration) || (isBlank(duration.getStart()) || isBlank(duration.getEnd()));
     }

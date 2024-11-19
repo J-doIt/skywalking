@@ -35,6 +35,9 @@ import org.apache.skywalking.oap.server.core.storage.query.IAggregationQueryDAO;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * 【指标聚合查询服务】
+ */
 public class AggregationQueryService implements Service {
     private final ModuleManager moduleManager;
     private IAggregationQueryDAO aggregationQueryDAO;
@@ -52,6 +55,13 @@ public class AggregationQueryService implements Service {
         return aggregationQueryDAO;
     }
 
+    /**
+     * 指标排序
+     * @param condition TopN查询条件
+     * @param duration
+     * @return
+     * @throws IOException
+     */
     public List<SelectedRecord> sortMetrics(TopNCondition condition, Duration duration) throws IOException {
         final String valueCName = ValueColumnMetadata.INSTANCE.getValueCName(condition.getName());
         List<KeyValue> additionalConditions = null;

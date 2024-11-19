@@ -47,6 +47,9 @@ import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 
 import static java.util.Objects.nonNull;
 
+/**
+ * 【链路查询服务】
+ */
 public class TraceQueryService implements Service {
 
     private final ModuleManager moduleManager;
@@ -73,6 +76,7 @@ public class TraceQueryService implements Service {
         return componentLibraryCatalogService;
     }
 
+    /** 查询 链路简介 */
     public TraceBrief queryBasicTraces(final String serviceId,
                                        final String serviceInstanceId,
                                        final String endpointId,
@@ -93,6 +97,7 @@ public class TraceQueryService implements Service {
         );
     }
 
+    /** 查询链路信息 */
     public Trace queryTrace(final String traceId) throws IOException {
         Trace trace = new Trace();
 
@@ -128,6 +133,7 @@ public class TraceQueryService implements Service {
         return trace;
     }
 
+    /** 构建 SegmentObject 中的 Span 列 */
     private List<Span> buildSpanList(SegmentObject segmentObject) {
         List<Span> spans = new ArrayList<>();
 
@@ -206,6 +212,7 @@ public class TraceQueryService implements Service {
         return spans;
     }
 
+    /** 寻找spans中的 根spans */
     private List<Span> findRoot(List<Span> spans) {
         List<Span> rootSpans = new ArrayList<>();
         spans.forEach(span -> {
@@ -236,6 +243,7 @@ public class TraceQueryService implements Service {
         return rootSpans;
     }
 
+    /** 寻找 spans 中 父span是 parentSpan 的所有子span */
     private void findChildren(List<Span> spans, Span parentSpan, List<Span> childrenSpan) {
         spans.forEach(span -> {
             if (span.getSegmentParentSpanId().equals(parentSpan.getSegmentSpanId())) {

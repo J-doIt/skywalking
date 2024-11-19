@@ -29,6 +29,9 @@ import org.apache.skywalking.oap.server.core.storage.query.ITopNRecordsQueryDAO;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * 【TopN记录查询服务】
+ */
 public class TopNRecordsQueryService implements Service {
     private final ModuleManager moduleManager;
     private ITopNRecordsQueryDAO topNRecordsQueryDAO;
@@ -46,6 +49,7 @@ public class TopNRecordsQueryService implements Service {
         return topNRecordsQueryDAO;
     }
 
+    /** 读取采样记录 */
     public List<SelectedRecord> readSampledRecords(TopNCondition condition, Duration duration) throws IOException {
         return getTopNRecordsQueryDAO().readSampledRecords(
             condition, ValueColumnMetadata.INSTANCE.getValueCName(condition.getName()), duration);

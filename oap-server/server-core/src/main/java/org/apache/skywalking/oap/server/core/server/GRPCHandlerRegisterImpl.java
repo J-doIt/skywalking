@@ -24,7 +24,7 @@ import io.grpc.ServerServiceDefinition;
 import org.apache.skywalking.oap.server.library.server.grpc.GRPCServer;
 
 /**
- *
+ * GRPCHandler注册服务实现类
  */
 public class GRPCHandlerRegisterImpl implements GRPCHandlerRegister {
 

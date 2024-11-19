@@ -21,8 +21,12 @@ package org.apache.skywalking.oap.server.core.server;
 import org.apache.skywalking.oap.server.library.server.jetty.JettyHandler;
 import org.apache.skywalking.oap.server.library.server.jetty.JettyServer;
 
+/**
+ * JettyHandler注册服务实现类
+ */
 public class JettyHandlerRegisterImpl implements JettyHandlerRegister {
 
+    /** JettyServer */
     private final JettyServer server;
 
     public JettyHandlerRegisterImpl(JettyServer server) {

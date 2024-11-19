@@ -86,6 +86,7 @@ core:
     gRPCSslKeyPath: ${SW_CORE_GRPC_SSL_KEY_PATH:""}
     gRPCSslCertChainPath: ${SW_CORE_GRPC_SSL_CERT_CHAIN_PATH:""}
     gRPCSslTrustedCAPath: ${SW_CORE_GRPC_SSL_TRUSTED_CA_PATH:""}
+    # 已激活的下采样聚合级别
     downsampling:
       - Hour
       - Day
@@ -111,11 +112,11 @@ core:
     instanceNameMaxLength: ${SW_INSTANCE_NAME_MAX_LENGTH:70}
     # The max length of service + endpoint names should be less than 240
     endpointNameMaxLength: ${SW_ENDPOINT_NAME_MAX_LENGTH:150}
-    # Define the set of span tag keys, which should be searchable through the GraphQL.
+    # 定义 span tag keys，这些 keys 应该可以通过 GraphQL 进行搜索。
     searchableTracesTags: ${SW_SEARCHABLE_TAG_KEYS:http.method,status_code,db.type,db.instance,mq.queue,mq.topic,mq.broker}
-    # Define the set of log tag keys, which should be searchable through the GraphQL.
+    # 定义 logs tag keys，这些 keys 应该可以通过 GraphQL 进行搜索。
     searchableLogsTags: ${SW_SEARCHABLE_LOGS_TAG_KEYS:level}
-    # Define the set of alarm tag keys, which should be searchable through the GraphQL.
+    # 定义 Alarm tag keys，这些 keys 应可通过 GraphQL 进行搜索。
     searchableAlarmTags: ${SW_SEARCHABLE_ALARM_TAG_KEYS:level}
     # The number of threads used to prepare metrics data to the storage.
     prepareThreads: ${SW_CORE_PREPARE_THREADS:2}

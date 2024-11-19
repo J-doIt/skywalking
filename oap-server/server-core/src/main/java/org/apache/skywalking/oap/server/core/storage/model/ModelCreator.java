@@ -24,17 +24,22 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * INewModel implementation supports creating a new module.
+ * <pre>
+ * (INewModel 的实现类 支持创建新模块。)
+ * </pre>
  */
 public interface ModelCreator extends Service {
+
     /**
-     * Add a new model
-     *
+     * 添加新 model
      * @return the created new model
      */
     Model add(Class<?> aClass, int scopeId, Storage storage, boolean record) throws StorageException;
 
+    /** 添加 CreatingListener */
     void addModelListener(CreatingListener listener) throws StorageException;
 
+    /** 执行 this.add() 或 this.addModelListener() 会得到通知 */
     interface CreatingListener {
         void whenCreating(Model model) throws StorageException;
     }

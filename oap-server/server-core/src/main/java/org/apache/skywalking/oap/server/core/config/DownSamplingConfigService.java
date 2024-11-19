@@ -22,11 +22,21 @@ import java.util.List;
 import org.apache.skywalking.oap.server.core.analysis.DownSampling;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * <pre>
+ * 【下采样聚合级别配置服务】
+ *
+ * 提供 CoreModuleConfig.downsampling 下配置的下采样聚合级别 的 getter 方法；
+ * </pre>
+ */
 public class DownSamplingConfigService implements Service {
 
     private boolean shouldToHour = false;
     private boolean shouldToDay = false;
 
+    /**
+     * @param downsampling {@link org.apache.skywalking.oap.server.core.CoreModuleConfig#downsampling}
+     */
     public DownSamplingConfigService(List<String> downsampling) {
         downsampling.forEach(value -> {
             if (DownSampling.Hour.getName().toLowerCase().equals(value.toLowerCase())) {

@@ -34,6 +34,10 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * Activate {@link OALEngine} according to {@link OALDefine}
+ * <pre>
+ * (根据 OALDefine 激活 OALEngine)。
+ * 【OAL引擎加载服务】
+ * </pre>
  */
 @Slf4j
 @RequiredArgsConstructor

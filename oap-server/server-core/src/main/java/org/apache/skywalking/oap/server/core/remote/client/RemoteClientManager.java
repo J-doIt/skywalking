@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
  *
  * <pre>
  * (此类管理 OAP 服务器之间的连接。有一个任务计划，它会自动从 cluster 模块查询 server 列表。例如 Zookeeper 集群模块或 Kubernetes 集群模块。)
+ * 【远程OAP服务管理】
  * </pre>
  */
 public class RemoteClientManager implements Service {
@@ -63,6 +64,7 @@ public class RemoteClientManager implements Service {
     private final ModuleDefineHolder moduleDefineHolder;
     private DynamicSslContext sslContext;
     private ClusterNodesQuery clusterNodesQuery;
+    /** 正在使用的远程OAP客户端 */
     private volatile List<RemoteClient> usingClients;
     private GaugeMetrics gauge;
     private int remoteTimeout;
@@ -206,6 +208,11 @@ public class RemoteClientManager implements Service {
      * which are alive to avoid create a new channel. Shutdown the clients which could not find in cluster config.
      * <p>
      * Create a gRPC client for remote instance except for self-instance.
+     * <pre>
+     * (比较现有客户端和远程实例集合之间的客户端。将客户端移动到处于活动状态的新客户端集合中，以避免创建新通道。
+     * 关闭在集群配置中找不到的客户端。
+     * 为远程实例创建除自实例外的 gRPC 客户端。)
+     * </pre>
      *
      * @param remoteInstances Remote instance collection by query cluster config.
      */
@@ -226,15 +233,18 @@ public class RemoteClientManager implements Service {
                                    null, Action.Create)
                            ));
 
+        // 取交集
         final Set<Address> unChangeAddresses = Sets.intersection(
             remoteClientCollection.keySet(), latestRemoteClients.keySet());
 
+        // 将 远程的包含在 unChangeAddresses 里的，标记为 Unchanged。
         unChangeAddresses.stream()
                          .filter(remoteClientCollection::containsKey)
                          .forEach(unChangeAddress -> remoteClientCollection.get(unChangeAddress)
                                                                            .setAction(Action.Unchanged));
 
         // make the latestRemoteClients including the new clients only
+        // （使 latestRemoteClients 仅包含新客户端）
         unChangeAddresses.forEach(latestRemoteClients::remove);
         remoteClientCollection.putAll(latestRemoteClients);
 
@@ -242,16 +252,19 @@ public class RemoteClientManager implements Service {
         remoteClientCollection.forEach((address, clientAction) -> {
             switch (clientAction.getAction()) {
                 case Unchanged:
+                    // 如果是 Unchanged，则将现有的远程客户端添加到新列表中
                     newRemoteClients.add(clientAction.getRemoteClient());
                     break;
                 case Create:
                     if (address.isSelf()) {
+                        // 如果地址是本地地址，则创建 SelfRemoteClient 并添加到新列表中
                         RemoteClient client = new SelfRemoteClient(moduleDefineHolder, address);
                         newRemoteClients.add(client);
                     } else {
+                        // 如果地址不是本地地址，则创建 GRPCRemoteClient 并连接，然后添加到新列表中
                         RemoteClient client;
                         client = new GRPCRemoteClient(moduleDefineHolder, address, 1, 3000, remoteTimeout, sslContext);
-                        client.connect();
+                        client.connect(); // 连接
                         newRemoteClients.add(client);
                     }
                     break;
@@ -259,9 +272,11 @@ public class RemoteClientManager implements Service {
         });
 
         //for stable ordering for rolling selector
+        // （用于滚动选择器的稳定排序）
         Collections.sort(newRemoteClients);
         this.usingClients = ImmutableList.copyOf(newRemoteClients);
 
+        // 过滤出需要关闭的远程客户端动作，并关闭连接
         remoteClientCollection.values()
                               .stream()
                               .filter(remoteClientAction ->
@@ -271,6 +286,7 @@ public class RemoteClientManager implements Service {
                               .forEach(remoteClientAction -> remoteClientAction.getRemoteClient().close());
     }
 
+    /** 和 this.usingClients 对比 */
     private boolean compare(List<RemoteInstance> remoteInstances) {
         if (usingClients.size() == remoteInstances.size()) {
             for (int i = 0; i < usingClients.size(); i++) {
@@ -285,14 +301,22 @@ public class RemoteClientManager implements Service {
     }
 
     enum Action {
-        Close, Unchanged, Create
+        /** 关闭 */
+        Close,
+        /** 未改变 */
+        Unchanged,
+        /** 新增 */
+        Create
     }
 
+    /** 远程客户端操作 */
     @Getter
     @AllArgsConstructor
     static private class RemoteClientAction {
+        /** 远程客户端 */
         private RemoteClient remoteClient;
 
+        /** 操作 */
         @Setter
         private Action action;
     }

@@ -53,6 +53,7 @@ import static java.util.Objects.isNull;
 
 /**
  * handle profile task queries
+ * 【分析任查询服务】
  */
 public class ProfileTaskQueryService implements Service {
     private final ModuleManager moduleManager;
@@ -119,6 +120,9 @@ public class ProfileTaskQueryService implements Service {
 
     /**
      * search profile task list
+     * <pre>
+     * (搜索分析任务列表)
+     * </pre>
      *
      * @param serviceId    monitor service
      * @param endpointName endpoint name to monitored
@@ -156,16 +160,21 @@ public class ProfileTaskQueryService implements Service {
 
     /**
      * search profiled traces
+     * <pre>
+     * (根据 taskId 搜索 Trace 列表)
+     * </pre>
      */
     public List<BasicTrace> getTaskTraces(String taskId) throws IOException {
         return getProfileThreadSnapshotQueryDAO().queryProfiledSegments(taskId);
     }
 
+    /** 搜索范围内的快照，并进行分析，得到分析结果 */
     public ProfileAnalyzation getProfileAnalyze(final String segmentId,
                                                 final List<ProfileAnalyzeTimeRange> timeRanges) throws IOException {
         return profileAnalyzer.analyze(segmentId, timeRanges);
     }
 
+    /** 根据 segmentId 查询 Segment */
     public ProfiledSegment getProfiledSegment(String segmentId) throws IOException {
         SegmentRecord segmentRecord = getProfileThreadSnapshotQueryDAO().getProfiledSegment(segmentId);
         if (segmentRecord == null) {
@@ -179,6 +188,7 @@ public class ProfileTaskQueryService implements Service {
         return profiledSegment;
     }
 
+    /** 根据 SegmentObject 构建 ProfiledSpan 列表 */
     private List<ProfiledSpan> buildProfiledSpanList(SegmentObject segmentObject) {
         List<ProfiledSpan> spans = new ArrayList<>();
 

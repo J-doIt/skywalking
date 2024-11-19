@@ -27,10 +27,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Worker Instance Service hosts all remote handler workers with the stream data type.
+ * <pre>
+ * (WorkerInstancesService 承载 所有具有 stream数据类型 的 RemoteHandleWorker。)
+ * </pre>
  */
 public class WorkerInstancesService implements IWorkerInstanceSetter, IWorkerInstanceGetter {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkerInstancesService.class);
 
+    /** ≤ remoteReceiverWorkName , RemoteHandleWorker ≥ */
     private final Map<String, RemoteHandleWorker> instances;
 
     public WorkerInstancesService() {
@@ -48,6 +52,7 @@ public class WorkerInstancesService implements IWorkerInstanceSetter, IWorkerIns
         if (instances.containsKey(remoteReceiverWorkName)) {
             throw new UnexpectedException("Duplicate worker name:" + remoteReceiverWorkName);
         }
+        // new 一个 RemoteHandleWorker，并 put 到 this.instances。
         instances.put(remoteReceiverWorkName, new RemoteHandleWorker(instance, streamDataClass));
         LOGGER.debug("Worker {} has been registered as {}", instance.toString(), remoteReceiverWorkName);
     }

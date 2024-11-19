@@ -27,6 +27,10 @@ import org.apache.skywalking.oap.server.library.module.Service;
 /**
  * NamingControl provides the service to make the names of service, instance and endpoint following the rules or
  * patterns, including length control, grouping, etc.
+ * <pre>
+ * (NamingControl 提供了使服务、实例和终端节点的名称遵循规则或模式的服务，包括长度控制、分组等。)
+ * 【命名控制服务】
+ * </pre>
  */
 @RequiredArgsConstructor
 @Slf4j
@@ -34,12 +38,17 @@ public class NamingControl implements Service {
     private final int serviceNameMaxLength;
     private final int instanceNameMaxLength;
     private final int endpointNameMaxLength;
+    /** 端点命名规则 */
     private final EndpointNameGrouping endpointNameGrouping;
 
     /**
      * Format endpoint name by using the length config in the core module. This is a global rule, every place including
      * service as the {@link org.apache.skywalking.oap.server.core.source.Source} should follow this for any core module
      * implementation.
+     * <pre>
+     * 使用 core 模块中的 length 配置格式化 endpoint name。
+     * 这是一个全局规则，每个 Source （包括 service） 对于任何核心模块实现都应遵循此规则。
+     * </pre>
      *
      * @param serviceName raw data, literal string.
      * @return the string, which length less than or equals {@link #serviceNameMaxLength};
@@ -65,6 +74,10 @@ public class NamingControl implements Service {
      * Format endpoint name by using the length config in the core module. This is a global rule, every place including
      * instance as the {@link org.apache.skywalking.oap.server.core.source.Source} should follow this for any core
      * module implementation.
+     * <pre>
+     * 使用 core 模块中的 length 配置格式化 endpoint name。
+     * 这是一个全局规则，每个 Source （包括 instance） 对于任何核心模块实现都应遵循此规则。
+     * </pre>
      *
      * @param instanceName raw data, literal string.
      * @return the string, which length less than or equals {@link #instanceNameMaxLength};
@@ -90,6 +103,10 @@ public class NamingControl implements Service {
      * Format endpoint name by using the length config in the core module. This is a global rule, every {@link
      * org.apache.skywalking.oap.server.core.source.Source} including endpoint should follow this for any core module
      * implementation.
+     * <pre>
+     * 使用 core 模块中的 length 配置格式化 endpoint name。
+     * 这是一个全局规则，每个 Source （包括 endpoint） 对于任何核心模块实现都应遵循此规则。
+     * </pre>
      *
      * @param serviceName  the service of the given endpoint.
      * @param endpointName raw data, literal string.
@@ -113,6 +130,7 @@ public class NamingControl implements Service {
             }
 
         }
+        // 根据 命名规则 格式化
         return endpointNameGrouping.format(serviceName, lengthControlledName);
     }
 }

@@ -38,12 +38,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * cache need to execute profile task
+ * 【待执行分析任务的缓存服务】
  */
 public class ProfileTaskCache implements Service {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileTaskCache.class);
 
+    /** ≤ serviceId , List≤ProfileTask> ≥ */
     private final Cache<String, List<ProfileTask>> profileTaskDownstreamCache;
+    /** ≤ taskId , ProfileTask ≥ */
     private final Cache<String, ProfileTask> profileTaskIdCache;
 
     private final ModuleManager moduleManager;
@@ -78,7 +81,7 @@ public class ProfileTaskCache implements Service {
     }
 
     /**
-     * query executable profile task
+     * 查询可执行的 ProfileTask 列表
      */
     public List<ProfileTask> getProfileTaskList(String serviceId) {
         // read profile task list from cache only, use cache update timer mechanism
@@ -87,7 +90,7 @@ public class ProfileTaskCache implements Service {
     }
 
     /**
-     * query profile task by id
+     * 根据 taskId 查询 ProfileTask
      */
     public ProfileTask getProfileTaskById(String id) {
         ProfileTask profile = profileTaskIdCache.getIfPresent(id);
@@ -107,7 +110,7 @@ public class ProfileTaskCache implements Service {
     }
 
     /**
-     * save service task list
+     * 保存 服务 的 ProfileTask 列表
      */
     public void saveTaskList(String serviceId, List<ProfileTask> taskList) {
         if (taskList == null) {

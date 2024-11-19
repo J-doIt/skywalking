@@ -23,7 +23,13 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * IModelManager implementation supports to read all existing models.
+ * <pre>
+ * (IModelManager的实现类 支持 读取所有存在的 models。)
+ * 【core.storage.Module管理】
+ * </pre>
  */
 public interface IModelManager extends Service {
+
+    /** 读取所有存在的 models */
     List<Model> allModels();
 }

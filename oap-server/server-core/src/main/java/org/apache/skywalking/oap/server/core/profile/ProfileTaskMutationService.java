@@ -35,6 +35,9 @@ import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 
+/**
+ * 【分析任务变更服务】
+ */
 @RequiredArgsConstructor
 public class ProfileTaskMutationService implements Service {
     private final ModuleManager moduleManager;
@@ -50,7 +53,7 @@ public class ProfileTaskMutationService implements Service {
     }
 
     /**
-     * create new profile task
+     * 创建新的 ProfileTaskRecord
      *
      * @param serviceId            monitor service id
      * @param endpointName         monitor endpoint name

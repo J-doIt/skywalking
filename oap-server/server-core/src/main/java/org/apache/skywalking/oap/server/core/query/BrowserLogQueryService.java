@@ -29,6 +29,9 @@ import org.apache.skywalking.oap.server.core.storage.query.IBrowserLogQueryDAO;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * 【浏览器日志查询服务】
+ */
 @RequiredArgsConstructor
 public class BrowserLogQueryService implements Service {
     private final ModuleManager moduleManager;
@@ -43,6 +46,7 @@ public class BrowserLogQueryService implements Service {
         });
     }
 
+    /** 查询浏览器错误日志 */
     public BrowserErrorLogs queryBrowserErrorLogs(final String serviceId,
                                                   final String serviceVersionId,
                                                   final String pagePathId,

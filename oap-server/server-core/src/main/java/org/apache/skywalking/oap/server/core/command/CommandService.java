@@ -26,6 +26,10 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * CommandService represents the command creation factory. All commands for downstream agents should be created here.
+ * <pre>
+ * (CommandService 表示命令创建工厂。下游 agents 的 所有命令 都应在此处创建。)
+ * 【分析任务命令（ProfileTaskCommand）创建服务】
+ * </pre>
  */
 public class CommandService implements Service {
     private final ModuleManager moduleManager;
@@ -34,6 +38,11 @@ public class CommandService implements Service {
         this.moduleManager = moduleManager;
     }
 
+    /**
+     * 创建 ProfileTaskCommand
+     * @param task
+     * @return
+     */
     public ProfileTaskCommand newProfileTaskCommand(ProfileTask task) {
         final String serialNumber = UUID.randomUUID().toString();
         return new ProfileTaskCommand(

@@ -31,6 +31,9 @@ import org.apache.skywalking.oap.server.core.storage.management.UITemplateManage
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * 【UI模版管理服务】
+ */
 @RequiredArgsConstructor
 public class UITemplateManagementService implements Service {
     private final ModuleManager moduleManager;

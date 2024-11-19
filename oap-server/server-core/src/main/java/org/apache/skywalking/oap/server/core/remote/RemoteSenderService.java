@@ -35,6 +35,11 @@ import org.slf4j.LoggerFactory;
 /**
  * RemoteSenderService represents a gRPC client to send metrics from one OAP node to another through network. It
  * provides several routing mode to select target OAP node.
+ * <pre>
+ * (RemoteSenderService 表示一个gRPC客户端，通过网络将指标从一个OAP节点发送到另一个OAP节点。
+ * 它提供了几种选择目标OAP节点的路由模式。)
+ * 【远程OAP节点的指标发送服务】
+ * </pre>
  */
 public class RemoteSenderService implements Service {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteSenderService.class);
@@ -53,23 +58,30 @@ public class RemoteSenderService implements Service {
 
     /**
      * Send data to the target based on the given selector
+     * <pre>
+     * (根据给定的选择器将数据发送到目标OAP节点)
+     * </pre>
      *
      * @param nextWorkName points to the worker to process the data when {@link RemoteServiceHandler} received.
      * @param streamData   data to be sent
      * @param selector     strategy implementation to choose suitable OAP node.
      */
     public void send(String nextWorkName, StreamData streamData, Selector selector) {
+
+        // 获取 远程OAP服务管理 服务
         RemoteClientManager clientManager = moduleManager.find(CoreModule.NAME)
                                                          .provider()
                                                          .getService(RemoteClientManager.class);
         RemoteClient remoteClient = null;
 
+        // 获取 正在使用的远程OAP客户端 列表
         List<RemoteClient> clientList = clientManager.getRemoteClient();
         if (clientList.size() == 0) {
             LOGGER.warn(
                 "There is no available remote server for now, ignore the streaming data until the cluster metadata initialized.");
             return;
         }
+        // 根据策略选择一个OPA客户端
         switch (selector) {
             case HashCode:
                 remoteClient = hashCodeSelector.select(clientList, streamData);
@@ -81,6 +93,7 @@ public class RemoteSenderService implements Service {
                 remoteClient = foreverFirstSelector.select(clientList, streamData);
                 break;
         }
+        // 将 streamData 推到 remoteClient 的 DataCarrier 中，以便之后发送到该OAP。
         remoteClient.push(nextWorkName, streamData);
     }
 }

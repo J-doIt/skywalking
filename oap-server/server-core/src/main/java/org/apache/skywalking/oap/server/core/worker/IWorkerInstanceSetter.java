@@ -24,6 +24,9 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * Worker instance register interface. Push the worker name, instance and class type having {@link Stream} annotation.
+ * <pre>
+ * (Worker实例注册接口。推送带有 @Stream注释 的 worker name、instance 和 class type。)
+ * </pre>
  */
 public interface IWorkerInstanceSetter extends Service {
     /**

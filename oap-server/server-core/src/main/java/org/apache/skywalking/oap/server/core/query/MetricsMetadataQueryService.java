@@ -29,20 +29,27 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * MetricsMetadataQueryService provides the metadata of metrics to other modules.
+ * <pre>
+ * (MetricsMetadataQueryService 向其他模块提供指标的元数据。)
+ * 【指标元数据查询服务】
+ * </pre>
  */
 public class MetricsMetadataQueryService implements Service {
+
+
+    /** 指标类型 */
     public MetricsType typeOfMetrics(String metricsName) {
         final Optional<ValueColumnMetadata.ValueColumn> valueColumn
             = ValueColumnMetadata.INSTANCE.readValueColumnDefinition(metricsName);
         if (valueColumn.isPresent()) {
             switch (valueColumn.get().getDataType()) {
-                case COMMON_VALUE:
+                case COMMON_VALUE: // 单个值
                     return MetricsType.REGULAR_VALUE;
-                case LABELED_VALUE:
+                case LABELED_VALUE: // 多个值
                     return MetricsType.LABELED_VALUE;
-                case HISTOGRAM:
+                case HISTOGRAM: // 按桶分组的
                     return MetricsType.HEATMAP;
-                case SAMPLED_RECORD:
+                case SAMPLED_RECORD: // 详情信息
                     return MetricsType.SAMPLED_RECORD;
                 case NOT_VALUE:
                 default:
@@ -53,6 +60,7 @@ public class MetricsMetadataQueryService implements Service {
         }
     }
 
+    /** 根据 regex 列出 指标 列 */
     public List<MetricDefinition> listMetrics(String regex) {
         return ValueColumnMetadata.INSTANCE.getAllMetadata()
                                            .entrySet()

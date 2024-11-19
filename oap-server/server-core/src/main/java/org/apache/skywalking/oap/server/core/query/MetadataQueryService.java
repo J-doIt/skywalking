@@ -32,6 +32,9 @@ import org.apache.skywalking.oap.server.core.storage.StorageModule;
 import org.apache.skywalking.oap.server.core.storage.query.IMetadataQueryDAO;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 
+/**
+ * 【元数据查询服务】
+ */
 public class MetadataQueryService implements org.apache.skywalking.oap.server.library.module.Service {
 
     private final ModuleManager moduleManager;
@@ -48,6 +51,7 @@ public class MetadataQueryService implements org.apache.skywalking.oap.server.li
         return metadataQueryDAO;
     }
 
+    /** 查询所有服务 */
     public List<Service> getAllServices(final String group) throws IOException {
         return getMetadataQueryDAO().getAllServices(group).stream()
                                     .peek(service -> {
@@ -59,35 +63,42 @@ public class MetadataQueryService implements org.apache.skywalking.oap.server.li
                                     .collect(Collectors.toList());
     }
 
+    /** 查询所有浏览器服务 */
     public List<Service> getAllBrowserServices() throws IOException {
         return getMetadataQueryDAO().getAllBrowserServices().stream().distinct().collect(Collectors.toList());
     }
 
+    /** 查询所有数据库 */
     public List<Database> getAllDatabases() throws IOException {
         return getMetadataQueryDAO().getAllDatabases().stream().distinct().collect(Collectors.toList());
     }
 
+    /** 根据条件查询服务 */
     public List<Service> searchServices(final long startTimestamp, final long endTimestamp,
                                         final String keyword) throws IOException {
         return getMetadataQueryDAO().searchServices(keyword).stream().distinct().collect(Collectors.toList());
     }
 
+    /** 根据条件查询服务实例 */
     public List<ServiceInstance> getServiceInstances(final long startTimestamp, final long endTimestamp,
                                                      final String serviceId) throws IOException {
         return getMetadataQueryDAO().getServiceInstances(startTimestamp, endTimestamp, serviceId)
                                     .stream().distinct().collect(Collectors.toList());
     }
 
+    /** 根据条件查询服务端点 */
     public List<Endpoint> searchEndpoint(final String keyword, final String serviceId,
                                          final int limit) throws IOException {
         return getMetadataQueryDAO().searchEndpoint(keyword, serviceId, limit)
                                     .stream().distinct().collect(Collectors.toList());
     }
 
+    /** 根据 serviceCode 查询服务*/
     public Service searchService(final String serviceCode) throws IOException {
         return getMetadataQueryDAO().searchService(serviceCode);
     }
 
+    /** 根据 endpointId 查询端点 */
     public EndpointInfo getEndpointInfo(final String endpointId) throws IOException {
         final IDManager.EndpointID.EndpointIDDefinition endpointIDDefinition = IDManager.EndpointID.analysisId(
             endpointId);

@@ -22,12 +22,23 @@ import lombok.Getter;
 import org.apache.skywalking.oap.server.core.CoreModuleConfig;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * <pre>
+ * 【配置信息获取服务】
+ *
+ * 提供 可搜索的 Traces、Log、Alarm 的 tag keys 的 getter 方法；
+ * 提供 gRPCHost 和 gRPCPort 的 getter 方法；
+ * </pre>
+ */
 @Getter
 public class ConfigService implements Service {
     private final String gRPCHost;
     private final int gRPCPort;
+    /** 可搜索的 Traces Tag keys */
     private final String searchableTracesTags;
+    /** 可搜索的 Logs Tag keys */
     private final String searchableLogsTags;
+    /** 可搜索的 Alarm Tag keys */
     private final String searchableAlarmTags;
 
     public ConfigService(CoreModuleConfig moduleConfig) {

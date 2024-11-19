@@ -29,6 +29,9 @@ import org.apache.skywalking.oap.server.core.storage.query.IAlarmQueryDAO;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.module.Service;
 
+/**
+ * 【告警查询服务】
+ */
 public class AlarmQueryService implements Service {
 
     private final ModuleManager moduleManager;
@@ -45,6 +48,7 @@ public class AlarmQueryService implements Service {
         return alarmQueryDAO;
     }
 
+    /** 查询告警 */
     public Alarms getAlarm(final Integer scopeId, final String keyword, final Pagination paging, final long startTB,
         final long endTB, final List<Tag> tags) throws IOException {
         PaginationUtils.Page page = PaginationUtils.INSTANCE.exchange(paging);

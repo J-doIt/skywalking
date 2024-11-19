@@ -23,7 +23,12 @@ import lombok.Getter;
 import org.apache.skywalking.oap.server.core.analysis.DispatcherDetectorListener;
 import org.apache.skywalking.oap.server.core.analysis.DispatcherManager;
 
+/**
+ * Source接收器实现类
+ */
 public class SourceReceiverImpl implements SourceReceiver {
+
+    /** 协调管理 */
     @Getter
     private final DispatcherManager dispatcherManager;
 
@@ -33,7 +38,7 @@ public class SourceReceiverImpl implements SourceReceiver {
 
     @Override
     public void receive(ISource source) {
-        //
+        // 转发
         dispatcherManager.forward(source);
     }
 
@@ -42,6 +47,7 @@ public class SourceReceiverImpl implements SourceReceiver {
         return getDispatcherManager();
     }
 
+    /** 扫描 SourceDispatcher 的实现类 */
     public void scan() throws IOException, InstantiationException, IllegalAccessException {
         dispatcherManager.scan();
     }

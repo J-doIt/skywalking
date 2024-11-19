@@ -22,8 +22,12 @@ import org.apache.skywalking.oap.server.library.module.Service;
 
 /**
  * Worker instance finder interface. Find work instance from all registered work instance based on worker name.
+ * <pre>
+ * (Worker实例查找接口。根据 worker name 从所有已注册的 work instance 中查找 work instance。)
+ * </pre>
  */
 public interface IWorkerInstanceGetter extends Service {
+
     RemoteHandleWorker get(String nextWorkerName);
 
 }

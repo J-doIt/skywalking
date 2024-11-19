@@ -50,6 +50,10 @@ import org.apache.skywalking.oap.server.library.module.Service;
 /**
  * MeterSystem provides the API way to create {@link MetricsStreamProcessor} rather than manual analysis metrics or OAL
  * script.
+ * <pre>
+ * (MeterSystem 提供了 创建 MetricsStreamProcessor 的 API 方法，而不是手工分析指标或OAL脚本。)
+ * 【指标的流处理系统】
+ * </pre>
  *
  * @since 8.0.0
  */
@@ -62,6 +66,9 @@ public class MeterSystem implements Service {
     /**
      * Host the dynamic meter prototype classes. These classes could be create dynamically through {@link
      * Object#clone()} in the runtime;
+     * <pre>
+     * (托管 动态指标原型类。这些类可以通过 Object.clone() 在运行时动态创建。)
+     * </pre>
      */
     private Map<String, MeterDefinition> meterPrototypes = new HashMap<>();
 
@@ -96,9 +103,13 @@ public class MeterSystem implements Service {
     /**
      * Create streaming calculation of the given metrics name. This methods is synchronized due to heavy implementation
      * including creating dynamic class. Don't use this in concurrency runtime.
+     * <pre>
+     * (创建给定指标名称的“流式处理计算”。由于繁重的实现（包括创建动态类），此方法是同步的。不要在并发运行时中使用它。)
+     * </pre>
      *
      * @param metricsName  The name used as the storage eneity and in the query stage.
      * @param functionName The function provided through {@link MeterFunction}.
+     * @param type
      * @throws IllegalArgumentException if the parameter can't match the expectation.
      * @throws UnexpectedException      if binary code manipulation fails or stream core failure.
      */
@@ -131,9 +142,14 @@ public class MeterSystem implements Service {
     /**
      * Create streaming calculation of the given metrics name. This methods is synchronized due to heavy implementation
      * including creating dynamic class. Don't use this in concurrency runtime.
+     * <pre>
+     * (创建给定指标名称的“流式处理计算”。由于繁重的实现（包括创建动态类），此方法是同步的。不要在并发运行时中使用它。)
+     * </pre>
      *
      * @param metricsName  The name used as the storage eneity and in the query stage.
      * @param functionName The function provided through {@link MeterFunction}.
+     * @param type
+     * @param dataType
      * @throws IllegalArgumentException if the parameter can't match the expectation.
      * @throws UnexpectedException      if binary code manipulation fails or stream core failure.
      */
@@ -252,6 +268,9 @@ public class MeterSystem implements Service {
      * Create an {@link AcceptableValue} instance for streaming calculation. AcceptableValue instance is stateful,
      * shouldn't do {@link AcceptableValue#accept(MeterEntity, Object)} once it is pushed into {@link
      * #doStreamingCalculation(AcceptableValue)}.
+     * <pre>
+     * (为 流计算 创建一个 AcceptableValue实例。AcceptableValue实例 是有状态的，不应该执行 AcceptableValue#accept(MeterEntity, Object)，一旦它被推入 doStreamingCalculation(AcceptableValue)。)
+     * </pre>
      *
      * @param metricsName A defined metrics name. Use {@link #create(String, String, ScopeType, Class)} to define a new
      *                    one.
@@ -275,6 +294,9 @@ public class MeterSystem implements Service {
 
     /**
      * Active the {@link MetricsStreamProcessor#in(Metrics)} for streaming calculation.
+     * <pre>
+     * (激活 MetricsStreamProcessor.in(Metrics) 进行 流式处理计算。)
+     * </pre>
      *
      * @param acceptableValue should only be created through {@link #create(String, String, ScopeType, Class)}
      */
